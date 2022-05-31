@@ -8,6 +8,11 @@
 *.so
 *.dylib
 *.zip
+*.tar.gz
+*.pyc
+*pb2*.py
+model
+__pycache__
 
 # Test binary, built with `go test -c`
 *.test

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Bhojpur Speech
+Comment=A web client (chrome) for the Bhojpur Speech
+Exec=/usr/local/bin/webspeech_chrome.sh
+Terminal=false
+Type=Application
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+Categories=X-Xfce-Toplevel;AudioVideo

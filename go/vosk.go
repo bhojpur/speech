@@ -20,8 +20,8 @@ package vosk
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// #cgo CPPFLAGS: -I ${SRCDIR}/../api
-// #cgo LDFLAGS: -L ${SRCDIR}/../api -lvosk -ldl -lpthread
+// #cgo CPPFLAGS: -I ${SRCDIR}/../pkg/api
+// #cgo LDFLAGS: -L ${SRCDIR}/../lib -lvosk -ldl -lpthread
 // #include <stdlib.h>
 // #include <vosk_api.h>
 import "C"

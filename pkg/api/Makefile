@@ -1,5 +1,5 @@
 # Locations of the dependencies
-KALDI_ROOT?=$(HOME)/travis/kaldi
+KALDI_ROOT?=$(HOME)/kaldi
 OPENFST_ROOT?=$(KALDI_ROOT)/tools/openfst
 OPENBLAS_ROOT?=$(KALDI_ROOT)/tools/OpenBLAS/install
 MKL_ROOT?=/opt/intel/mkl

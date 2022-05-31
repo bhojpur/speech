@@ -20,27 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import asyncio
-import websockets
+from multiprocessing.dummy import Pool
+from vosk import Model, KaldiRecognizer
+
 import sys
+import os
 import wave
+import json
 
-async def run_test(uri):
-    async with websockets.connect(uri) as websocket:
+model = Model("model")
 
-        wf = wave.open(sys.argv[1], "rb")
-        await websocket.send('{ "config" : { "sample_rate" : %d } }' % (wf.getframerate()))
-        buffer_size = int(wf.getframerate() * 0.2) # 0.2 seconds of audio
-        while True:
-            data = wf.readframes(buffer_size)
+def recognize(line):
+    uid, fn = line.split()
+    wf = wave.open(fn, "rb")
+    rec = KaldiRecognizer(model, wf.getframerate())
 
-            if len(data) == 0:
-                break
+    text = ""
+    while True:
+        data = wf.readframes(1000)
+        if len(data) == 0:
+            break
+        if rec.AcceptWaveform(data):
+            jres = json.loads(rec.Result())
+            text = text + " " + jres['text']
+    jres = json.loads(rec.FinalResult())
+    text = text + " " + jres['text']
+    return (uid + text)
 
-            await websocket.send(data)
-            print (await websocket.recv())
+def main():
+    p = Pool(8)
+    texts = p.map(recognize, open(sys.argv[1]).readlines())
+    print ("\n".join(texts))
 
-        await websocket.send('{"eof" : 1}')
-        print (await websocket.recv())
-
-asyncio.run(run_test('ws://localhost:2700'))
+main()

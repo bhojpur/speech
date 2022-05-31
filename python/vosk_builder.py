@@ -20,27 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import asyncio
-import websockets
-import sys
-import wave
+import os
+from cffi import FFI
 
-async def run_test(uri):
-    async with websockets.connect(uri) as websocket:
+vosk_root=os.environ.get("VOSK_SOURCE", "..")
+cpp_command = "cpp " + vosk_root + "/pkg/api/vosk_api.h"
 
-        wf = wave.open(sys.argv[1], "rb")
-        await websocket.send('{ "config" : { "sample_rate" : %d } }' % (wf.getframerate()))
-        buffer_size = int(wf.getframerate() * 0.2) # 0.2 seconds of audio
-        while True:
-            data = wf.readframes(buffer_size)
+ffibuilder = FFI()
+ffibuilder.set_source("vosk.vosk_cffi", None)
+ffibuilder.cdef(os.popen(cpp_command).read())
 
-            if len(data) == 0:
-                break
-
-            await websocket.send(data)
-            print (await websocket.recv())
-
-        await websocket.send('{"eof" : 1}')
-        print (await websocket.recv())
-
-asyncio.run(run_test('ws://localhost:2700'))
+if __name__ == '__main__':
+    ffibuilder.compile(verbose=True)

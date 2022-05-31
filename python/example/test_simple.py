@@ -20,27 +20,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import asyncio
-import websockets
+from vosk import Model, KaldiRecognizer, SetLogLevel
 import sys
+import os
 import wave
 
-async def run_test(uri):
-    async with websockets.connect(uri) as websocket:
+# You can set log level to -1 to disable debug messages
+SetLogLevel(0)
 
-        wf = wave.open(sys.argv[1], "rb")
-        await websocket.send('{ "config" : { "sample_rate" : %d } }' % (wf.getframerate()))
-        buffer_size = int(wf.getframerate() * 0.2) # 0.2 seconds of audio
-        while True:
-            data = wf.readframes(buffer_size)
+wf = wave.open(sys.argv[1], "rb")
+if wf.getnchannels() != 1 or wf.getsampwidth() != 2 or wf.getcomptype() != "NONE":
+    print ("Audio file must be WAV format mono PCM.")
+    exit (1)
 
-            if len(data) == 0:
-                break
+model = Model(lang="en-us")
 
-            await websocket.send(data)
-            print (await websocket.recv())
+# You can also init model by name or with a folder path
+# model = Model(model_name="vosk-model-en-us-0.21")
+# model = Model("models/en")
 
-        await websocket.send('{"eof" : 1}')
-        print (await websocket.recv())
+rec = KaldiRecognizer(model, wf.getframerate())
+rec.SetWords(True)
+rec.SetPartialWords(True)
 
-asyncio.run(run_test('ws://localhost:2700'))
+while True:
+    data = wf.readframes(4000)
+    if len(data) == 0:
+        break
+    if rec.AcceptWaveform(data):
+        print(rec.Result())
+    else:
+        print(rec.PartialResult())
+
+print(rec.FinalResult())

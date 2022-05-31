@@ -20,27 +20,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import asyncio
-import websockets
+from vosk import Model, KaldiRecognizer
 import sys
-import wave
+import json
+import os
 
-async def run_test(uri):
-    async with websockets.connect(uri) as websocket:
+model = Model(lang="en-us")
 
-        wf = wave.open(sys.argv[1], "rb")
-        await websocket.send('{ "config" : { "sample_rate" : %d } }' % (wf.getframerate()))
-        buffer_size = int(wf.getframerate() * 0.2) # 0.2 seconds of audio
-        while True:
-            data = wf.readframes(buffer_size)
+# Large vocabulary free form recognition
+rec = KaldiRecognizer(model, 16000)
 
-            if len(data) == 0:
-                break
+# You can also specify the possible word list
+#rec = KaldiRecognizer(model, 16000, "zero oh one two three four five six seven eight nine")
 
-            await websocket.send(data)
-            print (await websocket.recv())
+wf = open(sys.argv[1], "rb")
+wf.read(44) # skip header
 
-        await websocket.send('{"eof" : 1}')
-        print (await websocket.recv())
+while True:
+    data = wf.read(4000)
+    if len(data) == 0:
+        break
+    if rec.AcceptWaveform(data):
+        res = json.loads(rec.Result())
+        print (res['text'])
 
-asyncio.run(run_test('ws://localhost:2700'))
+res = json.loads(rec.FinalResult())
+print (res['text'])
