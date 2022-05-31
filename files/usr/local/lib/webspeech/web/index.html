@@ -1,0 +1,52 @@
+<!doctype html>
+<!--
+# A web-based user interface for the Bhojpur Speech processing engine.
+# This file defines a single page application.
+-->
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bhojpur Speech web user interface">
+
+    <title>Bhojpur Speech - Dashboard</title>
+
+    <link rel="shortcut icon" href="https://static.bhojpur.net/favicon.ico">
+
+    <!-- webspeech styles -->
+    <link rel="stylesheet" type="text/css" href="css/ws_style.css"/>
+    <!-- Fontawesome -->
+    <link rel="stylesheet" type="text/css" href="css/all.css"/>
+    <!-- 3D-clock -->
+    <link rel="stylesheet" type="text/css" href="css/clock.css"/>
+
+     <!-- jquery and special functions -->
+     <script src="js/jquery-min.js"></script>
+     <script src="js/reconnecting-eventsource.js"></script>
+     <script src="js/ws_funcs.js"></script>
+
+  </head>
+
+  <body>
+    <!-- flexbox with single row -->
+    <div id="content">
+      <!-- first element -->
+      {% include 'menu.tpl' %}
+
+      <!-- second element -->
+      <main>
+        {% include 'content_clock.tpl' %}
+        {% include 'content_channels.tpl' %}
+        {% include 'content_play.tpl' %}
+        {% include 'content_files.tpl' %}
+        {% include 'content_special.tpl' %}
+      </main>
+    </div>
+    <div id="msgarea" class="msgarea"></div>
+  </body>
+
+  <script>
+    get_events();
+  </script>
+</html>

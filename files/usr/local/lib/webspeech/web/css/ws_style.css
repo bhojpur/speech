@@ -1,0 +1,332 @@
+/* ---------------------------------------------------------------------------
+* A web user interface for the Bhojpur Speech processing engine.
+* CSS-styles.
+* ------------------------------------------------------------------------- */
+
+body {
+    background: black;
+    height: 400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+  }
+  
+  #content {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  #msgarea {
+    position: absolute;
+    bottom: 30px;
+    left: 5%;
+    width: 90%;
+    text-align: center;
+    background: blue;
+    color: white;
+    border-radius: 10px;
+    font-size: 36px;
+  }
+  
+  /* left-side menu   ------------------------------------------------------- */
+  
+  #menu {
+    flex: 0 0 90px;
+    /* background: yellow; */
+  }
+  
+  #menu a {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    transition: all 0.3s ease;
+    color: blue;
+    font-size: 36px;
+  }
+  
+  #menu a:hover {
+    background: white;
+  }
+  
+  .menu_active {
+    color: black !important;
+    background-color: blue;
+  }
+  
+  .menu_disabled {
+    color: black !important;
+    background-color: black;
+  }
+  
+  /* content container   ---------------------------------------------------- */
+  
+  main {
+    flex: 1;
+    /* background: green;    /* for layout test */
+    padding: 0px 10px;
+    height: inherit;
+  }
+  
+  .content_area {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+  
+  /* channel grid   --------------------------------------------------------- */
+  
+  .ch_grid {
+    display: grid;
+    grid-gap: 15px;
+    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-auto-flow: dense;
+  }
+  
+  .ch_item {
+    background-image: linear-gradient(224deg, blue 0%, lightblue 100%);
+    padding-top: 100%;                  /* padding trick creates square-items */
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  .ch_item .ch_img { /* absolutely positioned */
+    position: absolute;
+    top: 0;
+    right:0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .ch_item .ch_txt { /* absolutely positioned */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #B0C5FF;
+    text-shadow: 0 1px 1px #26145F;
+  }
+  
+  /* --- player   ----------------------------------------------------------- */
+  
+  .play {                           /* single row flex-container */
+    display: flex;
+    height: inherit;
+    justify-content: flex-start;
+  }
+  
+  .play_left {                      /* single column flex-container */
+    display: flex;
+    height: inherit;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .play_right {                      /* single column flex-container */
+    display: flex;
+    height: inherit;
+    flex: 1;
+    flex-direction: column;
+  }
+  
+  .play_clock {
+    display: flex;
+    justify-content: center;
+    font-size: 72px;
+    color: blue;
+  }
+  
+  .play_img {
+    position: relative;
+    flex-shrink: 1;
+  }
+  
+  .play_name {
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
+    color: white;
+    font-size: 22px;
+  }
+  
+  .play_buttons {
+    display: flex;
+    justify-content: center;
+    padding-top: 3px;
+    font-size: 36px;
+  }
+  
+  .play_buttons i {
+    font-size: 48px;
+    padding-left: 5px;
+    color: blue;
+  }
+  
+  .play_info {
+    max-height: 340px;
+    flex-grow: 1;
+    box-sizing: border-box;
+    margin-left: 15px;
+    padding: 16px;
+    border-style: double;
+    border-width: 5px;
+    border-color: blue;
+    border-radius: 5px;
+    color: lightblue;
+    font-size: 36px;
+    overflow-y: auto;
+  }
+  
+  .play_time {
+    display: flex;
+    width: inherit;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    margin-left: 15px;
+    color: blue;
+    font-size: 36px;
+  }
+  
+  .play_time_cur {
+    padding-right: 15px;
+  }
+  
+  .play_time_range {
+    flex:1;
+    color: blue;
+  }
+  
+  .play_time_tot {
+    padding-left: 15px;
+  }
+  
+  input[type="range"] {
+    -webkit-appearance: none;
+    margin-right: 15px;
+    width: 200px;
+    height: 7px;
+    background: lightblue;
+    border-radius: 5px;
+    background-image: linear-gradient(blue, blue);
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+    transition: background 1.0s linear;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 0px;
+    width: 0px;
+    background: lightblue;
+  }
+  
+  input[type=range]::-moz-range-thumb {
+    height: 0px;
+    width: 0px;
+    background: lightblue;
+  }
+  
+  input[type=range]::-webkit-slider-runnable-track  {
+    -webkit-appearance: none;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    transition: background 1.0s ease-in-out;
+  }
+  
+  /* --- file selection   --------------------------------------------------- */
+  
+  .file_list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 98vh;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  
+  .dir_item {
+    width: 95%;
+    margin: 5px;
+    padding: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: yellow;
+    border-radius: 30px;
+    font-size: 36px;
+    color: yellow;
+  }
+  
+  .file_item {
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    width: 95%;
+    margin: 5px;
+    padding: 15px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: blue;
+    border-radius: 30px;
+    font-size: 36px;
+    color: lightblue;
+    scrollbar-width: none;
+  }
+  
+  .file_item_selected {
+    border-width: 7px;
+    border-style: double;
+  }
+  
+  .file_btn {
+    padding: 7px;
+    margin-right: 10px;
+    border-width: 1px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: blue;
+    color: blue;
+  }
+  
+  .file_file {
+    flex: 1;
+  }
+  
+  
+  .file_duration {
+  
+  }
+  
+  
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  
+  /* --- special functions   ------------------------------------------------ */
+  
+  .content_special {
+    display: flex;
+    height: inherit;
+    justify-content: space-evenly;
+    align-items: center;
+  }
+  
+  .content_special a {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    color: black;
+    background-color: blue;
+    font-size: 72px;
+  
+    border-width: 2px;
+    border-radius: 10px;
+    border-style: groove;
+    border-color: aqua;
+  }
