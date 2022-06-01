@@ -1,5 +1,7 @@
 /.vscode
 /bin
+/dist
+/build
 
 # Binaries for programs and plugins
 *.exe

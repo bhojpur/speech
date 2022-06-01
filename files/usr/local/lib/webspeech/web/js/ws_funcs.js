@@ -13,7 +13,7 @@ function init_state() {
         'tabid': 'tab_clock'
       },
       'mode':     null,
-      'bhojpur':    {
+      'speech':    {
         'last_channel': null
       },
       'player': {
@@ -302,7 +302,7 @@ function init_state() {
     $('#ws_infos').empty();
     $('#ws_pause_btn').removeClass('far').addClass('fas').prop("disabled", true);
     if (data.last) {
-      if (ws_state.mode == 'bhojpur') {
+      if (ws_state.mode == 'speech') {
         openTab('tab_channels');
       } else {
         openTab('tab_files');
@@ -435,7 +435,7 @@ function init_state() {
   */
   
   function bhojpur_play_channel(data) {
-    ws_state.mode = 'bhojpur';
+    ws_state.mode = 'speech';
     // check if channel is new
     if (data.nr != ws_state.bhojpur.last_channel) {
       ws_state.bhojpur.last_channel = data.nr;

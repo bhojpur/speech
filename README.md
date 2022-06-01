@@ -1,6 +1,6 @@
 # Bhojpur Speech - Processing Engine
 
-The `Bhojpur Speech` is a high-perforance, intelligent speech engine applied within the
+The `Bhojpur Speech` is a high-performance, intelligent speech engine applied within the
 [Bhojpur.NET Platform](https://github.com/bhojpur/platform/) for delivery of distributed
 `applicationa` or `services`.
 

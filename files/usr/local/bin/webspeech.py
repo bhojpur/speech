@@ -49,7 +49,7 @@ class Options(object):
 def get_parser():
   """ configure cmdline-parser """
 
-  parser = ArgumentParser(add_help=False,description='Bhojpur Speech is a voice processing engine with automated speech recognition')
+  parser = ArgumentParser(prog="webspeech",add_help=False,description='Bhojpur Speech is a voice processing engine with automated speech recognition')
 
   parser.add_argument('-p', '--play', action='store_true',
     dest='do_play', default=False,
@@ -126,7 +126,7 @@ if __name__ == '__main__':
   options.pgm_dir = os.path.dirname(os.path.abspath(__file__))
   check_options(options)
 
-  app = WebSpeech(options)
+  app = BhojpurSpeech(options)
 
   # setup signal-handler
   signal.signal(signal.SIGTERM, app.signal_handler)
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
   if options.do_list:
     if not options.quiet:
-      app.msg("Bhojpur Speech version %s" % app.api.get_version(),force=True)
+      app.msg("Bhojpur Speech: online version %s" % app.api.get_version(),force=True)
     channels = app.api.bhojpur_get_channels()
     PRINT_CHANNEL_FMT="{0:2d}: {1}"
     for channel in channels:

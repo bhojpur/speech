@@ -12,9 +12,10 @@ tasks:
     build-tools:
         desc: Build the Bhojpur Speech software build tools
         cmds:
-        - GOFLAGS=-mod=mod go build -o bin/speechsvr ./cmd/server/main.go 
-        - chmod 755 bin/speechsvr
-        - cp bin/speechsvr $GOPATH/bin
+        - pyinstaller --onefile ./files/usr/local/bin/webspeech.py
+        - GOFLAGS=-mod=mod go build -o dist/speechsvr ./cmd/server/main.go 
+        - chmod 755 dist/speechsvr
+        - cp dist/speechsvr $GOPATH/bin
 
     build-desktop:
         desc: Build the desktop application for current OS

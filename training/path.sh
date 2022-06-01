@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 # Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# The Bhojpur Speech application module. The file just imports all classes into
-# the wstation namespace
-
-from . SRBase           import Base           as Base
-from . SRApi            import Api            as Api
-from . SRBhojpurSpeech  import BhojpurSpeech  as BhojpurSpeech
-from . SREventFormatter import EventFormatter as EventFormatter
-from . SRSpeechEvents   import SpeechEvents   as SpeechEvents
-from . SRSpeech         import Speech         as Speech
-from . SRPlayer         import Player         as Player
-from . SRRecorder       import Recorder       as Recorder
-from . SRMpg123         import Mpg123         as Mpg123
-from . SRWebServer      import WebServer      as WebServer
-from . SRSpeechClient   import SpeechClient   as SpeechClient
-from . SRKeyController  import KeyController  as KeyController
-
-# voice control with Vosk is optional
-have_vosk = False
-try:
-  from . SRVoskController  import VoskController  as VoskController
-  have_vosk = True
-except:
-  pass
+export KALDI_ROOT=/Volumes/software/macos/kaldi
+export PATH=$PWD/utils:$KALDI_ROOT/src/bin:$KALDI_ROOT/tools/openfst/bin:$KALDI_ROOT/src/fstbin:$KALDI_ROOT/src/gmmbin:$KALDI_ROOT/src/featbin:$KALDI_ROOT/src/lm:$KALDI_ROOT/src/sgmmbin:$KALDI_ROOT/src/sgmm2bin:$KALDI_ROOT/src/fgmmbin:$KALDI_ROOT/src/latbin:$KALDI_ROOT/src/nnetbin:$KALDI_ROOT/src/nnet2bin:$KALDI_ROOT/src/online2bin:$KALDI_ROOT/src/ivectorbin:$KALDI_ROOT/src/lmbin:$KALDI_ROOT/src/chainbin:$KALDI_ROOT/src/nnet3bin:$KALDI_ROOT/src/rnnlmbin:$PWD:$PATH:$KALDI_ROOT/tools/sph2pipe_v2.5
+export PATH=$KALDI_ROOT/tools/ngram-1.3.10/src/bin:$PATH
+export LD_LIBRARY_PATH=$KALDI_ROOT/tools/openfst/lib/fst/
+export LC_ALL=C
+export PATH=$KALDI_ROOT/tools/python:${PATH}
+export LIBLBFGS=$KALDI_ROOT/tools/liblbfgs-1.10
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}:${LIBLBFGS}/lib/.libs
+export SRILM=$KALDI_ROOT/tools/srilm
+export PATH=${PATH}:${SRILM}/bin:${SRILM}/bin/i686-m64

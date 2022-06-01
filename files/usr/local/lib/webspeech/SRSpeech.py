@@ -98,7 +98,7 @@ class Speech(Base):
     if 'channel_nr' in state_map:
       self._last_channel = state_map['channel_nr']
 
-    self._api.update_state(section="speech",key="channel_nr",
+    self._api.update_state(section="radio",key="channel_nr",
                            value=self._last_channel,publish=False)
 
   # --- read channels   -------------------------------------------------------
@@ -161,7 +161,7 @@ class Speech(Base):
 
     # check if we have to do anything
     if self._backend.play(channel['url']):
-      self._api.update_state(section="speech",key="channel_nr",
+      self._api.update_state(section="radio",key="channel_nr",
                              value=channel,publish=False)
       self._api._push_event({'type': 'bhojpur_play_channel', 'value': channel})
       self._channel_nr   = nr

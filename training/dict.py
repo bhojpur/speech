@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# -*- coding: utf-8 -*-
 
 # Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 #
@@ -21,26 +20,39 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# The Bhojpur Speech application module. The file just imports all classes into
-# the wstation namespace
+import phonetisaurus
+import pandas as pd
+words = {}
 
-from . SRBase           import Base           as Base
-from . SRApi            import Api            as Api
-from . SRBhojpurSpeech  import BhojpurSpeech  as BhojpurSpeech
-from . SREventFormatter import EventFormatter as EventFormatter
-from . SRSpeechEvents   import SpeechEvents   as SpeechEvents
-from . SRSpeech         import Speech         as Speech
-from . SRPlayer         import Player         as Player
-from . SRRecorder       import Recorder       as Recorder
-from . SRMpg123         import Mpg123         as Mpg123
-from . SRWebServer      import WebServer      as WebServer
-from . SRSpeechClient   import SpeechClient   as SpeechClient
-from . SRKeyController  import KeyController  as KeyController
+for line in open("db/en.dic"):
+    items = line.split()
+    if items[0] not in words:
+         words[items[0]] = []
+    words[items[0]].append(" ".join(items[1:]))
 
-# voice control with Vosk is optional
-have_vosk = False
-try:
-  from . SRVoskController  import VoskController  as VoskController
-  have_vosk = True
-except:
-  pass
+extra_dic_words={}
+for line in open("db/extra.dic"):
+    items = line.split()
+    if items[0] not in words:
+         words[items[0]] = []
+    extra_dic_words[items[0]] = []
+    words[items[0]].append(" ".join(items[1:]))
+    extra_dic_words[items[0]].append(" ".join(items[1:]))
+
+new_words = set()
+for line in open("db/extra.txt"):
+    for w in line.split():
+        if w not in words:
+             new_words.add(w)
+
+
+for w, phones in phonetisaurus.predict(new_words, "db/en-g2p/en.fst"):
+    words[w] = []
+    if w in extra_dic_words.keys():
+        phones.append(extra_dic_words[w])
+    words[w].append(" ".join(phones))
+
+for w, phones in words.items():
+    for p in phones:
+        print (w, p)
+

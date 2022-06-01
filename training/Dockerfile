@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 # Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,26 +18,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# The Bhojpur Speech application module. The file just imports all classes into
-# the wstation namespace
+# set base image (host OS)
+FROM ubuntu:20.04
 
-from . SRBase           import Base           as Base
-from . SRApi            import Api            as Api
-from . SRBhojpurSpeech  import BhojpurSpeech  as BhojpurSpeech
-from . SREventFormatter import EventFormatter as EventFormatter
-from . SRSpeechEvents   import SpeechEvents   as SpeechEvents
-from . SRSpeech         import Speech         as Speech
-from . SRPlayer         import Player         as Player
-from . SRRecorder       import Recorder       as Recorder
-from . SRMpg123         import Mpg123         as Mpg123
-from . SRWebServer      import WebServer      as WebServer
-from . SRSpeechClient   import SpeechClient   as SpeechClient
-from . SRKeyController  import KeyController  as KeyController
+ENV TZ=Asia/Kolkata \
+    DEBIAN_FRONTEND=noninteractive
 
-# voice control with Vosk is optional
-have_vosk = False
-try:
-  from . SRVoskController  import VoskController  as VoskController
-  have_vosk = True
-except:
-  pass
+# set the working directory in the container
+WORKDIR /vosk_training
+
+# copy the dependencies file to the working directory
+COPY requirements.txt  install_kaldi.sh ./
+RUN pwd
+RUN ls
+# install dependencies
+RUN chmod +x install_kaldi.sh
+RUN ./install_kaldi.sh
+RUN pip install -r requirements.txt
+RUN ls
+WORKDIR /vosk_training/kaldi/tools
+#RUN cd /kaldi/tools
+RUN extras/install_opengrm.sh
+RUN ./install_srilm.sh lolz lorg abc@gmail.com
+
+# copy the content of the local src directory to the working directory
+#WORKDIR /vosk_training/vosk-model-en-us-0.22-compile/
+#COPY  vosk-model-en-us-0.22-compile .
+RUN wget https://alphacephei.com/vosk/models/vosk-model-en-us-0.22-compile.zip
+RUN unzip vosk-model-en-us-0.22-compile.zip
+
+# command to run on container start
+CMD [ "sh", "-c", "/bin/sh"]

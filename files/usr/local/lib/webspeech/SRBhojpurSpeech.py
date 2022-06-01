@@ -21,9 +21,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# Bhojpur Speech: implementation of class WebSpeech
+# Bhojpur Speech: implementation of class BhojpurSpeech
 #
-# The class WebSpeech implements the main application class and serves as model
+# The class BhojpurSpeech implements the main application class and serves as model
 # and controller (for generic functions)
 
 import os, sys, json, traceback, threading
@@ -33,7 +33,7 @@ from webspeech import *
 
 # --- main application class   ----------------------------------------------
 
-class WebSpeech(Base):
+class BhojpurSpeech(Base):
   """ main application class """
 
   VERSION = "1.0.0"
@@ -60,30 +60,30 @@ class WebSpeech(Base):
     if options.do_record:
       self._events  = SpeechEvents(self)
       self.backend  = None
-      self.bhojpur  = Speech(self)
+      self.speech   = Speech(self)
       self.recorder = Recorder(self)
-      self._objects = [self,self.bhojpur,self.recorder]
+      self._objects = [self,self.speech,self.recorder]
     elif options.do_play:
       self._events  = SpeechEvents(self)
       self.backend  = Mpg123(self)
-      self.bhojpur  = Speech(self)
+      self.speech   = Speech(self)
       self.player   = Player(self)
-      self._objects = [self,self.bhojpur,self.player,self.backend]
+      self._objects = [self,self.speech,self.player,self.backend]
     elif options.do_list:
       self.backend  = None
-      self.bhojpur  = Speech(self)
-      self._objects = [self,self.bhojpur]
+      self.speech   = Speech(self)
+      self._objects = [self,self.speech]
     else:
       self._events  = SpeechEvents(self)
       self._server  = WebServer(self)
       self.backend  = Mpg123(self)
-      self.bhojpur  = Speech(self)
+      self.speech   = Speech(self)
       self.player   = Player(self)
       self.recorder = Recorder(self)
-      self._objects = [self,self.bhojpur,self.player,
+      self._objects = [self,self.speech,self.player,
                        self.recorder,self.backend]
 
-    self._state = {'mode': 'bhojpur'}
+    self._state = {'mode': 'speech'}
     self._load_state()
     if self.backend:
       self.backend.create()
@@ -117,8 +117,8 @@ class WebSpeech(Base):
   def _get_version(self):
     """ return version """
 
-    self.msg("Bhojpur Speech: web engine version: %s" % WebSpeech.VERSION)
-    return WebSpeech.VERSION
+    self.msg("Bhojpur Speech: online version: %s" % BhojpurSpeech.VERSION)
+    return BhojpurSpeech.VERSION
 
   # --- return state   -----------------------------------------------------
 
@@ -132,14 +132,14 @@ class WebSpeech(Base):
   def sys_halt(self):
     """ shutdown system """
 
-    self.msg("WebSpeech: processing sys_halt")
+    self.msg("Bhojpur Speech: processing sys_halt")
     if not self.debug:
       try:
         os.system("sudo /sbin/halt &")
       except:
         pass
     else:
-      self.msg("WebSpeech: no shutdown in debug-mode")
+      self.msg("Bhojpur Speech: no shutdown in debug-mode")
     self.api._push_event({'type': 'sys', 'value': 'halt'})
 
   # --- reboot system   -----------------------------------------------------
@@ -147,14 +147,14 @@ class WebSpeech(Base):
   def sys_reboot(self):
     """ reboot system """
 
-    self.msg("WebSpeech: processing sys_reboot")
+    self.msg("Bhojpur Speech: processing sys_reboot")
     if not self.debug:
       try:
         os.system("sudo /sbin/reboot &")
       except:
         pass
     else:
-      self.msg("WebSpeech: no reboot in debug-mode")
+      self.msg("Bhojpur Speech: no reboot in debug-mode")
     self.api._push_event({'type': 'sys', 'value': 'reboot'})
 
   # --- restart service   -----------------------------------------------------
@@ -162,14 +162,14 @@ class WebSpeech(Base):
   def sys_restart(self):
     """ restart service """
 
-    self.msg("WebSpeech: processing sys_restart")
+    self.msg("Bhojpur Speech: processing sys_restart")
     if not self.debug:
       try:
         os.system("sudo /bin/systemctl restart webspeech.service &")
       except:
         pass
     else:
-      self.msg("WebSpeech: no application restart in debug-mode")
+      self.msg("Bhojpur Speech: no application restart in debug-mode")
     self.api._push_event({'type': 'sys', 'value': 'restart'})
 
   # --- stop service   --------------------------------------------------------
@@ -177,14 +177,14 @@ class WebSpeech(Base):
   def sys_stop(self):
     """ stop service """
 
-    self.msg("WebSpeech: processing sys_stop")
+    self.msg("Bhojpur Speech: processing sys_stop")
     if not self.debug:
       try:
         os.system("sudo /bin/systemctl stop webspeech.service &")
       except:
         pass
     else:
-      self.msg("WebSpeech: no application stop in debug-mode")
+      self.msg("Bhojpur Speech: no application stop in debug-mode")
     self.api._push_event({'type': 'sys', 'value': 'stop'})
 
   # --- update (and distribute) state   ---------------------------------------
@@ -222,7 +222,7 @@ class WebSpeech(Base):
       state[obj.__module__] = obj.get_persistent_state()
 
     f = open(self._store,"w")
-    self.msg("WebSpeech: Saving settings to %s" % self._store)
+    self.msg("Bhojpur Speech: Saving settings to %s" % self._store)
     json.dump(state,f,indent=2,sort_keys=True)
     f.close()
 
@@ -235,7 +235,7 @@ class WebSpeech(Base):
       if not os.path.exists(self._store):
         state = {}
       else:
-        self.msg("WebSpeech: Loading settings from %s" % self._store)
+        self.msg("Bhojpur Speech: Loading settings from %s" % self._store)
         f = open(self._store,"r")
         state = json.load(f)
         f.close()
@@ -243,7 +243,7 @@ class WebSpeech(Base):
         if obj.__module__ in state:
           obj.set_persistent_state(state[obj.__module__])
     except:
-      self.msg("WebSpeech: Loading settings failed")
+      self.msg("Bhojpur Speech: Loading settings failed")
       if self.debug:
         traceback.print_exc()
 
@@ -260,7 +260,7 @@ class WebSpeech(Base):
   def set_persistent_state(self,state_map):
     """ restore persistent state (overrides SRBase.set_pesistent_state()) """
 
-    self.msg("WebSpeech: restoring persistent state")
+    self.msg("Bhojpur Speech: restoring persistent state")
     if 'mode' in state_map:
       self._state['mode'] = state_map['mode']
 
@@ -269,7 +269,7 @@ class WebSpeech(Base):
   def signal_handler(self,_signo, _stack_frame):
     """ signal-handler for clean shutdown """
 
-    self.msg("WebSpeech: received signal, stopping program ...")
+    self.msg("Bhojpur Speech: received signal, stopping program ...")
     self.cleanup()
 
   # --- cleanup of ressources   -----------------------------------------------
@@ -286,7 +286,7 @@ class WebSpeech(Base):
       self.api.rec_stop()
     map(threading.Thread.join,self._threads)
     self._save_state()
-    self.msg("WebSpeech: ... done stopping program")
+    self.msg("Bhojpur Speech: ... done stopping program")
 
   # --- run method   ----------------------------------------------------------
 
@@ -294,4 +294,4 @@ class WebSpeech(Base):
     """ start all threads and return """
 
     threading.Thread(target=self._server.run).start()
-    self.msg("WebSpeech: started web-server")
+    self.msg("Bhojpur Speech: started web-server")
