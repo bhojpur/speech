@@ -22,7 +22,7 @@ You need [OpenFST](https://www.openfst.org), [Kaldi](https://github.com/kaldi-as
 and [Vosk](http://alphacephei.com/vosk/) software libraries to build the `server engine`.
 
 ```bash
-brew install openfst automake sox subversion portaudio portmidi mpg123
+brew install openfst automake sox subversion ffmpeg portaudio portmidi mpg123
 sudo pip3 install numpy flask openfst pyttsx3 flask sseclient
 fstinfo --help
 ```
@@ -118,8 +118,9 @@ go run internal/transcribe/main.go -f ./python/example/test.wav
 #### Python-based Speech Synthesis
 
 A sample `Python` program (i.e. [speaker](internal/speaker/main.py)) is included in this
-repository. It is based on `pyttsx3` library.
+repository. It is based on `pyttsx3` or [coqui STT](https://github.com/coqui-ai/STT) library.
 
 ```bash
+sudo pip3 install pyttsx3 stt
 python3 ./internal/speaker/main.py
 ```

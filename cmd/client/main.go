@@ -80,9 +80,9 @@ func main() {
 			return
 		}
 		if err != nil {
-			log.Fatal("cannot receive response: ", err)
+			log.Fatal("Bhojpur Speech: cannot receive response: ", err)
 		}
-		log.Printf("Now Playing: %d - %s", res.GetSequence(), res.GetFilename())
+		log.Printf("Bhojpur Speech: client playing: %d - %s", res.GetSequence(), res.GetFilename())
 
 		// fmt.Println("audio data: ", res.GetData())
 

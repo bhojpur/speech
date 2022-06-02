@@ -1,4 +1,4 @@
-package utils
+package cmd
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -21,50 +21,28 @@ package utils
 // THE SOFTWARE.
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
-	"runtime"
+	"github.com/spf13/pflag"
+	"go.coder.com/cli"
 )
 
-var clear map[string]func() = map[string]func(){
-	"darwin": func() {
-		cmd := exec.Command("clear") //Darwin example, its tested
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	},
-	"linux": func() {
-		cmd := exec.Command("clear") //Linux example, its tested
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	},
-	"windows": func() {
-		cmd := exec.Command("cmd", "/c", "cls") //Windows example, its tested
-		cmd.Stdout = os.Stdout
-		cmd.Run()
-	},
-}
+// Root is the command that starts the program.
+type Root struct{}
 
-func Chk(err error) {
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
+// Run prints the usage of a flag set.
+func (r *Root) Run(fl *pflag.FlagSet) { fl.Usage() }
+
+// Spec returns a command spec containing a description of it's usage.
+func (r *Root) Spec() cli.CommandSpec {
+	return cli.CommandSpec{
+		Name:  "speechrec",
+		Usage: "[subcommand] [flags]",
+		Desc:  "Bhojpur Speech recorder accepts microphone audio from command line",
 	}
 }
 
-func GetenvDefault(key, fallback string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		value = fallback
-	}
-	return value
-}
-
-func CallClear() {
-	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin, etc.
-	if ok {                          //if we defined a clear func for that platform:
-		value() //we execute it
-	} else { //unsupported platform
-		panic("Your platform is unsupported! I can't clear terminal screen :(")
+// Subcommands returns a set of any existing child-commands.
+func (r *Root) Subcommands() []cli.Command {
+	return []cli.Command{
+		&recordCmd{},
 	}
 }

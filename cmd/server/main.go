@@ -46,12 +46,12 @@ func main() {
 	)
 	listen, err := net.Listen("tcp", serverAddr)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Fatalf("Bhojpur Speech: Failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer(grpc.Creds(creds))
 	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
+	fmt.Printf("Bhojpur Speech: server engine listening on gRPC port%s\n", serverAddr)
 	grpcServer.Serve(listen)
 }
