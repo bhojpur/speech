@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# Class SRWebServer: serve gui and process API-requests
+# Class WebServer: serves the GUI and process Bhojpur Speech API requests
 
 # --- System-Imports   -------------------------------------------------------
 
@@ -32,10 +32,10 @@ from flask import send_from_directory, send_file
 
 from werkzeug.serving import make_server, WSGIRequestHandler
 
-from webspeech import Base
+from bhojpur import Base
 
 class WebServer(Base):
-  """ Serve GUI and process API-requests """
+  """ Serve GUI and process Bhojpur Speech API requests """
 
   # --- constructor   --------------------------------------------------------
 
@@ -63,7 +63,7 @@ class WebServer(Base):
     self._host = self.get_value(self._app.parser,"WEB","host","0.0.0.0")
 
     default_web_root = os.path.realpath(
-      os.path.join(pgm_dir,"..","lib","webspeech","web"))
+      os.path.join(pgm_dir,"..","lib","bhojpur","web"))
     self._web_root  = self.get_value(self._app.parser,"WEB","web_root",
                                          default_web_root)
 

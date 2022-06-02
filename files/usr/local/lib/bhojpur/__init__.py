@@ -21,37 +21,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# Bhojpur Speech: implementation of class API
-# Collect all API-functions
+# The Bhojpur Speech application module. The file just imports all classes into
+# the webspeech namespace
 
-from webspeech import Base
+from . Base           import Base           as Base
+from . Api            import Api            as Api
+from . BhojpurSpeech  import BhojpurSpeech  as BhojpurSpeech
+from . EventFormatter import EventFormatter as EventFormatter
+from . SpeechEvents   import SpeechEvents   as SpeechEvents
+from . Speech         import Speech         as Speech
+from . Player         import Player         as Player
+from . Recorder       import Recorder       as Recorder
+from . Mpg123         import Mpg123         as Mpg123
+from . WebServer      import WebServer      as WebServer
+from . SpeechClient   import SpeechClient   as SpeechClient
+from . KeyController  import KeyController  as KeyController
 
-class Api(Base):
-  """ The class holds references to all Bhojpur Speech API functions """
-
-  def __init__(self,app):
-    """ initialization """
-
-    self._app          = app
-    self.debug         = app.debug
-
-  # --- execute Bhojpur Speech API by name   ----------------------------------
-
-  def _exec(self,name,**args):
-    """ execute a Bhojpur Speech API by name """
-
-    if hasattr(self,name):
-      self.msg("executing: %s(%r)" % (name,dict(**args)))
-      return getattr(self,name)(**args)
-    else:
-      self.msg("unknown Bhojpur Speech API method %s" % name)
-      raise NotImplementedError("Bhojpur Speech API %s not implemented" % name)
-
-  # --- return list of APIs   ------------------------------------------------
-
-  def get_api_list(self):
-    """ return list of Bhojpur Speech APIs """
-
-    return [func for func in dir(self)
-            if callable(getattr(self, func)) and not func.startswith("_")
-            and func not in Base.__dict__ ]
+# voice control with Vosk is optional
+have_vosk = False
+try:
+  from .VoskController  import VoskController  as VoskController
+  have_vosk = True
+except:
+  pass

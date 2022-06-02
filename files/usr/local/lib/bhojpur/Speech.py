@@ -29,7 +29,7 @@ import os, time, datetime, shlex, json
 import queue, collections
 import threading, signal, subprocess, traceback
 
-from webspeech import *
+from bhojpur import *
 
 class Speech(Base):
   """ Speech-controller """
@@ -61,7 +61,7 @@ class Speech(Base):
 
     # section [WEB]
     default_web_root = os.path.realpath(
-      os.path.join(self._app.options.pgm_dir,"..","lib","webspeech","web"))
+      os.path.join(self._app.options.pgm_dir,"..","lib","bhojpur","web"))
     self._web_root  = self.get_value(self._app.parser,"WEB","web_root",
                                          default_web_root)
 

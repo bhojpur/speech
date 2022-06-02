@@ -27,8 +27,8 @@
 
 import queue, threading, datetime, sys
 
-from webspeech import Base
-from webspeech import EventFormatter
+from bhojpur import Base
+from bhojpur import EventFormatter
 
 class SpeechEvents(Base):
   """ Multiplex events to consumers """

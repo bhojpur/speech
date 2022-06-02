@@ -29,7 +29,7 @@ import threading, subprocess, signal, os, shlex, re, traceback
 from threading import Thread
 import queue, collections, time
 
-from webspeech import Base
+from bhojpur import Base
 
 class Mpg123(Base):
   """ mpg123 control-object """

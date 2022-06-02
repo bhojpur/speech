@@ -27,7 +27,7 @@
 
 import os, time, datetime, subprocess, threading, copy, queue
 
-from webspeech import Base
+from bhojpur import Base
 
 class Player(Base):
   """ Player-controller """

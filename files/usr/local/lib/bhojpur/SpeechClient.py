@@ -29,7 +29,7 @@ import urllib, urllib3, threading, time, json
 import sseclient
 import http.client as httplib
 
-from webspeech import Base
+from bhojpur import Base
 
 class SpeechClient(Base):
   """ python-client for the Bhojpur Speech API """

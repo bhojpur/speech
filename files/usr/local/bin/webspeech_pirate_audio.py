@@ -76,10 +76,10 @@ class PirateAudio(SpeechCli):
     if logo == self._last_logo:
       return
 
-    logo_file = os.path.join(self.pgm_dir,"..","lib","webspeech",
+    logo_file = os.path.join(self.pgm_dir,"..","lib","bhojpur",
                              "web",logo)
     if not os.path.exists(logo_file):
-      logo_file = os.path.join(self.pgm_dir,"..","lib","webspeech",
+      logo_file = os.path.join(self.pgm_dir,"..","lib","bhojpur",
                              "web","images","default.png")
     self.msg("PirateAudio: logo-file: %s" % logo_file)
 

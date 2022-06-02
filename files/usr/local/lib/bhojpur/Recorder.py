@@ -28,7 +28,7 @@
 import threading, os, datetime, urllib.request
 from threading import Thread
 
-from webspeech import Base
+from bhojpur import Base
 
 class Recorder(Thread,Base):
   """ Recorder-controller """

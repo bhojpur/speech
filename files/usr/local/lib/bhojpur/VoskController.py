@@ -28,11 +28,11 @@
 
 import os, sys, queue, json, traceback, vosk, sounddevice as sd
 
-from webspeech import Base
+from bhojpur import Base
 
 have_LEDs = False
 try:
-  import webspeech.LEDController as LEDController
+  import bhojpur.LEDController as LEDController
   have_LEDs = True
 except:
   pass

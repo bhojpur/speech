@@ -29,7 +29,7 @@
 import os, sys, json, traceback, threading
 import configparser
 
-from webspeech import *
+from bhojpur import *
 
 # --- main application class   ----------------------------------------------
 

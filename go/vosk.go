@@ -21,7 +21,7 @@ package vosk
 // THE SOFTWARE.
 
 // #cgo CPPFLAGS: -I ${SRCDIR}/../pkg/api
-// #cgo LDFLAGS: -L ${SRCDIR}/../lib -lvosk -ldl -lpthread
+// #cgo LDFLAGS: -L ${SRCDIR}/../libs -lvosk -ldl -lpthread
 // #include <stdlib.h>
 // #include <vosk_api.h>
 import "C"

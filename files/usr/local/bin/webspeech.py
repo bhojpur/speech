@@ -34,10 +34,10 @@ from   argparse import ArgumentParser
 
 # --- application imports   --------------------------------------------------
 
-sys.path.append(os.path.join(
+sys.path.insert(1, os.path.join(
   os.path.dirname(sys.argv[0]),"../lib"))
 
-from webspeech import *
+from bhojpur import *
 
 # --- helper class for options   --------------------------------------------
 
@@ -125,6 +125,13 @@ if __name__ == '__main__':
   options        = opt_parser.parse_args(namespace=Options)
   options.pgm_dir = os.path.dirname(os.path.abspath(__file__))
   check_options(options)
+
+  BHOJPURSPEECH_AVAILABLE = True
+  try:
+    from ..lib.webspeech import BhojpurSpeech
+  except ImportError:
+    BHOJPURPEECH_AVAILABLE = False
+    print("[WARNING] Unable to import BhojpurSpeech, pre-compiling ops will be disabled.")
 
   app = BhojpurSpeech(options)
 
