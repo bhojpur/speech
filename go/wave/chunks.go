@@ -1,4 +1,4 @@
-package main
+package wave
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -21,37 +21,64 @@ package main
 // THE SOFTWARE.
 
 import (
-	"fmt"
-	"log"
-	"net"
-	"os"
-	"path/filepath"
-	"strconv"
-
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"bytes"
+	"io"
 )
 
-func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
+const (
+	maxFileSize             = 2 << 31
+	riffChunkSize           = 12
+	listChunkOffset         = 36
+	riffChunkSizeBaseOffset = 36 // RIFFChunk(12byte) + fmtChunk(24byte) = 36byte
+	fmtChunkSize            = 16
+)
 
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
+var (
+	riffChunkToken = "RIFF"
+	waveFormatType = "WAVE"
+	fmtChunkToken  = "fmt "
+	listChunkToken = "LIST"
+	dataChunkToken = "data"
+)
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
+// 12byte
+type RiffChunk struct {
+	ID         []byte // 'RIFF'
+	Size       uint32 // 36bytes + data_chunk_size or whole_file_size - 'RIFF'+ChunkSize (8byte)
+	FormatType []byte // 'WAVE'
+}
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+// 8 + 16 = 24byte
+type FmtChunk struct {
+	ID   []byte // 'fmt '
+	Size uint32 // 16
+	Data *WavFmtChunkData
+}
+
+// 16byte
+type WavFmtChunkData struct {
+	WaveFormatType uint16 // PCM 1
+	Channel        uint16 // monoral or streo
+	SamplesPerSec  uint32 // 44100
+	BytesPerSec    uint32 // byte
+	BlockSize      uint16 // *
+	BitsPerSamples uint16 //
+}
+
+// data
+type DataReader interface {
+	io.Reader
+	io.ReaderAt
+}
+
+type DataReaderChunk struct {
+	ID   []byte     // 'data'
+	Size uint32     // * channel
+	Data DataReader //
+}
+
+type DataWriterChunk struct {
+	ID   []byte
+	Size uint32
+	Data *bytes.Buffer
 }

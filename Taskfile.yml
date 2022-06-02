@@ -13,6 +13,12 @@ tasks:
         desc: Build the Bhojpur Speech software build tools
         cmds:
         - pyinstaller --onefile ./files/usr/local/bin/webspeech.py
+        - GOFLAGS=-mod=mod go build -o dist/speechwss ./cmd/websocket/main.go 
+        - chmod 755 dist/speechwss
+        - cp dist/speechwss $GOPATH/bin
+        - GOFLAGS=-mod=mod go build -o dist/speechctl ./cmd/client/main.go 
+        - chmod 755 dist/speechctl
+        - cp dist/speechctl $GOPATH/bin
         - GOFLAGS=-mod=mod go build -o dist/speechsvr ./cmd/server/main.go 
         - chmod 755 dist/speechsvr
         - cp dist/speechsvr $GOPATH/bin
@@ -74,6 +80,9 @@ tasks:
         cmds:
         - protoc --proto_path=. --proto_path=$GOPATH/src/github.com/gogo/protobuf --go_out=./pkg/api --go_opt=module=github.com/bhojpur/speech/pkg/api pkg/api/v1/server/stt.proto
         - protoc --proto_path=. --proto_path=$GOPATH/src/github.com/gogo/protobuf --go-grpc_out=./pkg/api --go-grpc_opt=module=github.com/bhojpur/speech/pkg/api pkg/api/v1/server/stt.proto
+        - protoc --proto_path=. --proto_path=$GOPATH/src/github.com/gogo/protobuf --go_out=./pkg/api --go_opt=module=github.com/bhojpur/speech/pkg/api pkg/api/v1/stream/stream.proto
+        - protoc --proto_path=. --proto_path=$GOPATH/src/github.com/gogo/protobuf --go-grpc_out=./pkg/api --go-grpc_opt=module=github.com/bhojpur/speech/pkg/api pkg/api/v1/stream/stream.proto
+
 
     test:
         desc: Execute all the Unit Tests

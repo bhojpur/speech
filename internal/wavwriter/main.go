@@ -21,37 +21,50 @@ package main
 // THE SOFTWARE.
 
 import (
-	"fmt"
-	"log"
-	"net"
+	"math"
 	"os"
-	"path/filepath"
-	"strconv"
 
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"github.com/bhojpur/speech/go/wave"
 )
 
 func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
-
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
+	f, err := os.Create("./internal/test.wav")
+	defer f.Close()
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		panic(err)
+	}
+	param := wave.WriterParam{
+		Out:           f,
+		Channel:       1,
+		SampleRate:    44100,
+		BitsPerSample: 16,
 	}
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
+	w, err := wave.NewWriter(param)
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+	amplitude := 0.1
+	hz := 440.0
+	length := param.SampleRate * 1
+
+	for i := 0; i < length; i++ {
+		_data := amplitude * math.Sin(2.0*math.Pi*hz*float64(i)/float64(param.SampleRate))
+		_data = (_data + 1.0) / 2.0 * 65536.0
+		if _data > 65535.0 {
+			_data = 65535.0
+		} else if _data < 0.0 {
+			_data = 0.0
+		}
+		data := uint16(_data+0.5) - 32768 //
+		var td []int16
+		td = []int16{int16(data)}
+		_, err = w.WriteSample16(td)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	defer w.Close()
+	if err != nil {
+		panic(err)
+	}
 }

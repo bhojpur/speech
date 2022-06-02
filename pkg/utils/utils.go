@@ -1,4 +1,4 @@
-package main
+package utils
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -22,36 +22,44 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
 	"os"
-	"path/filepath"
-	"strconv"
-
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"os/exec"
+	"runtime"
 )
 
-func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
+var clear map[string]func() = map[string]func(){
+	"linux": func() {
+		cmd := exec.Command("clear") //Linux example, its tested
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	},
+	"windows": func() {
+		cmd := exec.Command("cmd", "/c", "cls") //Windows example, its tested
+		cmd.Stdout = os.Stdout
+		cmd.Run()
+	},
+}
 
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
+func Chk(err error) {
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		fmt.Println(err)
+		panic(err)
 	}
+}
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
+func GetenvDefault(key, fallback string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists {
+		value = fallback
+	}
+	return value
+}
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+func CallClear() {
+	value, ok := clear[runtime.GOOS] //runtime.GOOS -> linux, windows, darwin etc.
+	if ok {                          //if we defined a clear func for that platform:
+		value() //we execute it
+	} else { //unsupported platform
+		panic("Your platform is unsupported! I can't clear terminal screen :(")
+	}
 }

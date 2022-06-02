@@ -20,38 +20,60 @@ package main
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// It decodes an MP3 file and writes the raw PCM data to a file
+
 import (
 	"fmt"
-	"log"
-	"net"
+	"github.com/bhojpur/speech/go/mpg123"
 	"os"
-	"path/filepath"
-	"strconv"
-
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
-
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+	// check command-line arguments
+	if len(os.Args) != 3 {
+		fmt.Fprintln(os.Stderr, "usage: mp3dump <infile.mp3> <outfile.raw>")
+		return
 	}
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
+	// create mpg123 decoder instance
+	decoder, err := mpg123.NewDecoder("")
+	if err != nil {
+		panic("could not initialize mpg123")
+	}
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+	// open a file with decoder
+	err = decoder.Open(os.Args[1])
+	if err != nil {
+		panic("error opening mp3 file")
+	}
+	defer decoder.Close()
+
+	// get audio format information
+	rate, chans, _ := decoder.GetFormat()
+	fmt.Fprintln(os.Stderr, "Encoding: Signed 16bit")
+	fmt.Fprintln(os.Stderr, "Sample Rate:", rate)
+	fmt.Fprintln(os.Stderr, "Channels:", chans)
+
+	// make sure output format does not change
+	decoder.FormatNone()
+	decoder.Format(rate, chans, mpg123.ENC_SIGNED_16)
+
+	// open output file
+	o, err := os.Create(os.Args[2])
+	if err != nil {
+		panic("error opening output file")
+	}
+	defer o.Close()
+
+	// decode mp3 file and dump output
+	buf := make([]byte, 2048*16)
+	for {
+		len, err := decoder.Read(buf)
+		o.Write(buf[0:len])
+		if err != nil {
+			break
+		}
+	}
+	o.Close()
+	decoder.Delete()
 }

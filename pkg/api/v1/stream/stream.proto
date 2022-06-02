@@ -1,4 +1,4 @@
-package main
+syntax = "proto3";
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -20,38 +20,19 @@ package main
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import (
-	"fmt"
-	"log"
-	"net"
-	"os"
-	"path/filepath"
-	"strconv"
+package v1.stream;
 
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-)
+option go_package = "github.com/bhojpur/speech/pkg/api/v1/stream;stream";
+import "google/protobuf/empty.proto";
 
-func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
+message Data {
+    int32 sequence = 1;
+    string filename = 2;
+    int64 rate = 3;
+    int64 channels = 4;
+    bytes data = 5;
+}
 
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
-	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
-	}
-
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
-
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+service Streamer {
+    rpc Audio(google.protobuf.Empty) returns (stream Data);
 }

@@ -22,36 +22,35 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net"
-	"os"
-	"path/filepath"
-	"strconv"
 
-	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
-	"github.com/bhojpur/speech/pkg/utils"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"github.com/bhojpur/speech/go/wave"
 )
 
 func main() {
-	wd, _ := os.Getwd()
-	certFile := filepath.Join(wd, "ssl", "cert.pem")
-	keyFile := filepath.Join(wd, "ssl", "private.key")
-	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
-
-	serverAddr := fmt.Sprintf(
-		":%s",
-		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
-	)
-	listen, err := net.Listen("tcp", serverAddr)
+	fpath := "./internal/test.wav"
+	reader, err := wave.NewReader(fpath)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		panic(err)
 	}
 
-	grpcServer := grpc.NewServer(grpc.Creds(creds))
-	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
+BREAKPOINT:
+	for {
+		_, err := reader.ReadSample()
+		if err != nil {
+			fmt.Println(err.Error())
+			break BREAKPOINT
+		}
+	}
+	if reader.NumSamples != reader.ReadSampleNum {
+		fmt.Printf("Samples: %d\nReads: %d\n", reader.NumSamples, reader.ReadSampleNum)
+		fmt.Println(reader.NumSamples, reader.ReadSampleNum)
+	} else {
+		fmt.Println("loaded normally")
+	}
 
-	fmt.Printf("Listening gRPC on %s\n", serverAddr)
-	grpcServer.Serve(listen)
+	// file info
+	fmt.Printf("%#v\n", reader.RiffChunk)
+	fmt.Printf("%#v\n", reader.FmtChunk)
+	fmt.Printf("%#v\n", reader.FmtChunk.Data)
+	fmt.Printf("%#v\n", reader.DataChunk)
 }

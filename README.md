@@ -22,7 +22,7 @@ You need [OpenFST](https://www.openfst.org), [Kaldi](https://github.com/kaldi-as
 and [Vosk](http://alphacephei.com/vosk/) software libraries to build the `server engine`.
 
 ```bash
-brew install openfst automake sox subversion
+brew install openfst automake sox subversion portaudio portmidi mpg123
 sudo pip3 install numpy flask openfst pyttsx3 flask sseclient
 fstinfo --help
 ```

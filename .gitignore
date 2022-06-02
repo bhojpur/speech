@@ -114,3 +114,4 @@ __pycache__
 # vendor/
 
 /vosk-model*.zip
+/internal/speaker/*.mp3

@@ -21,83 +21,81 @@ package main
 // THE SOFTWARE.
 
 import (
-	"encoding/json"
+	"bytes"
+	"context"
+	"encoding/binary"
+	"fmt"
 	"io"
-	"net/url"
+	"log"
 	"os"
+	"path/filepath"
+	"strconv"
+	"time"
 
-	"github.com/gorilla/websocket"
-	log "github.com/sirupsen/logrus"
+	"github.com/bhojpur/speech/go/portaudio"
+	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
+	"github.com/bhojpur/speech/pkg/utils"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
-const Host = "localhost"
-const Port = "2700"
-const buffsize = 8000
-
-type Message struct {
-	Result []struct {
-		Conf  float64
-		End   float64
-		Start float64
-		Word  string
-	}
-	Text string
-}
-
-var m Message
-
 func main() {
-
-	if len(os.Args) < 2 {
-		panic("Please specify second argument")
+	wd, _ := os.Getwd()
+	certFile := filepath.Join(wd, "ssl", "cert.pem")
+	creds, err := credentials.NewClientTLSFromFile(certFile, "")
+	if err != nil {
+		log.Fatalf("Bhojpur Speech: Error creating credentials: %s\n", err)
 	}
 
-	u := url.URL{Scheme: "ws", Host: Host + ":" + Port, Path: ""}
-	log.Info("connecting to ", u.String())
-
-	// Opening websocket connection
-	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
-	check(err)
-	defer c.Close()
-
-	f, err := os.Open(os.Args[1])
-	check(err)
-
-	for {
-		buf := make([]byte, buffsize)
-		dat, err := f.Read(buf)
-
-		if dat == 0 && err == io.EOF {
-			err = c.WriteMessage(websocket.TextMessage, []byte("{\"eof\" : 1}"))
-			check(err)
-			break
-		}
-		check(err)
-
-		err = c.WriteMessage(websocket.BinaryMessage, buf)
-		check(err)
-
-		// Read message from server
-		_, _, err = c.ReadMessage()
-		check(err)
-	}
-
-	// Read final message from server
-	_, msg, err := c.ReadMessage()
-	check(err)
-
-	// Closing websocket connection
-	c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-
-	// Unmarshalling received message
-	err = json.Unmarshal(msg, &m)
-	check(err)
-	log.Info(m.Text)
-}
-
-func check(err error) {
+	serverAddr := fmt.Sprintf(
+		"%s:%s",
+		utils.GetenvDefault("ADDR", pb.ADDR),
+		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
+	)
+	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(creds))
 
 	if err != nil {
-		log.Error(err)
+		log.Fatalf("Bhojpur Speech: Fail to dial: %s\n", err)
+	}
+
+	defer conn.Close()
+	client := pb.NewStreamerClient(conn)
+
+	stream, err := client.Audio(context.Background(), &emptypb.Empty{})
+	if err != nil {
+		log.Fatal("Bhojpur Speech: audio client error: ", err)
+	}
+
+	portaudio.Initialize()
+	defer portaudio.Terminate()
+	out := make([]int16, 8192)
+	var portAudioStream *portaudio.Stream
+
+	for {
+		time.Sleep(50 * time.Millisecond)
+		utils.CallClear()
+		res, err := stream.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Fatal("cannot receive response: ", err)
+		}
+		log.Printf("Now Playing: %d - %s", res.GetSequence(), res.GetFilename())
+
+		// fmt.Println("audio data: ", res.GetData())
+
+		if portAudioStream == nil {
+			portAudioStream, err = portaudio.OpenDefaultStream(0, int(res.GetChannels()), float64(res.GetRate()), len(out), &out)
+			utils.Chk(err)
+			defer portAudioStream.Close()
+
+			utils.Chk(portAudioStream.Start())
+			defer portAudioStream.Stop()
+		}
+
+		utils.Chk(binary.Read(bytes.NewBuffer(res.GetData()), binary.LittleEndian, out))
+		utils.Chk(portAudioStream.Write())
 	}
 }
