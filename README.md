@@ -23,7 +23,7 @@ and [Vosk](http://alphacephei.com/vosk/) software libraries to build the `server
 
 ```bash
 brew install openfst automake sox subversion
-sudo pip3 install numpy flask openfst pyttsx3
+sudo pip3 install numpy flask openfst pyttsx3 flask sseclient
 fstinfo --help
 ```
 
@@ -43,15 +43,33 @@ python3 -m pip install aiortc aiohttp aiorpc vosk
 
 #### WebSpeech Application
 
+Firstly, please note that `evdev` dependency is available on a Linux operating system only.
+It is required for Keyboard device events.
+
 ```bash
+sudo pip3 install evdev
+```
+
+Also, you must have [mpg123](https://www.mpg123.de) >= v1.29.3 MPEG audio player installed.
+
+```bash
+sudo apt-get install -y mpg123
 sudo tools/install.sh [username]
 sudo tools/install-vosk.sh
 ```
 
-To check all the `webspeech` command line `Help` options, type the following command
+Type the following command in a new Termianl window to run the `webspeech` server engine.
 
 ```bash
-webspeech.py -h
+webspeech.py
+```
+
+You can open `http://localhost:8026` URL in a web browser to access the application.
+
+Type the following command in a new Terminal window to run the `webspeech` command line.
+
+```bash
+webspeech_cli.py -H localhost -P 8026 -o
 ```
 
 ### Server-side Speech Recognition

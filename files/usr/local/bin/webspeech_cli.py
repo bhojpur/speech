@@ -54,7 +54,7 @@ class SpeechCli(object):
   def _get_parser(self):
     """ configure cmdline-parser """
 
-    parser = ArgumentParser(add_help=False,description='Bhojpur Speech CLI')
+    parser = ArgumentParser(prog="webspeech_cli",add_help=False,description='Bhojpur Speech is a voice processing engine with automated speech recognition')
 
     parser.add_argument('-H', '--host', nargs=1,
       metavar='host', default=[DEFAULT_HOST],
@@ -284,6 +284,10 @@ if __name__ == '__main__':
 
   # set local to default from environment
   locale.setlocale(locale.LC_ALL, '')
+
+  print("Bhojpur Speech client engine (online)")
+  print("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+  print("All rights reserved.\n")
 
   # create client-class and parse arguments
   app = SpeechCli()

@@ -32,7 +32,7 @@ import threading, signal, subprocess, traceback
 from bhojpur import *
 
 class Speech(Base):
-  """ Speech-controller """
+  """ Bhojpur Speech controller """
 
   def __init__(self,app):
     """ initialization """
@@ -84,7 +84,7 @@ class Speech(Base):
   # --- return persistent state of this class   -------------------------------
 
   def get_persistent_state(self):
-    """ return persistent state (overrides SRBase.get_pesistent_state()) """
+    """ return persistent state (overrides Base.get_pesistent_state()) """
     return {
       'channel_nr': self._last_channel
       }
@@ -92,13 +92,13 @@ class Speech(Base):
   # --- restore persistent state of this class   ------------------------------
 
   def set_persistent_state(self,state_map):
-    """ restore persistent state (overrides SRBase.set_pesistent_state()) """
+    """ restore persistent state (overrides Base.set_pesistent_state()) """
 
     self.msg("Speech: restoring persistent state")
     if 'channel_nr' in state_map:
       self._last_channel = state_map['channel_nr']
 
-    self._api.update_state(section="radio",key="channel_nr",
+    self._api.update_state(section="speech",key="channel_nr",
                            value=self._last_channel,publish=False)
 
   # --- read channels   -------------------------------------------------------
@@ -155,21 +155,26 @@ class Speech(Base):
   def bhojpur_play_channel(self,nr=0):
     """ switch to given channel """
 
-    channel = self.bhojpur_get_channel(int(nr))
-    nr      = channel['nr']
-    self.msg("Speech: start playing channel %d (%s)" % (nr,channel['name']))
+    try:
+      channel = self.bhojpur_get_channel(int(nr))
+      nr      = channel['nr']
+      self.msg("Speech: start playing channel %d (%s)" % (nr,channel['name']))
 
-    # check if we have to do anything
-    if self._backend.play(channel['url']):
-      self._api.update_state(section="radio",key="channel_nr",
+      # check if we have to do anything
+      if self._backend.play(channel['url']):
+        self._api.update_state(section="speech",key="channel_nr",
                              value=channel,publish=False)
-      self._api._push_event({'type': 'bhojpur_play_channel', 'value': channel})
-      self._channel_nr   = nr
-      self._last_channel = self._channel_nr
-    else:
-      self.msg("Speech: already on channel %d" % nr)
-      # theoretically we could also have lost our backend
-    return channel
+        self._api._push_event({'type': 'bhojpur_play_channel', 'value': channel})
+        self._channel_nr   = nr
+        self._last_channel = self._channel_nr
+      else:
+        self.msg("Speech: already on channel %d" % nr)
+        # theoretically we could also have lost our backend
+      return channel
+    except:
+      print("Speech: channel", nr, "not found yet")
+
+    return None
 
   # --- switch to next channel   ----------------------------------------------
 

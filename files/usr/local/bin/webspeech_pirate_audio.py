@@ -36,7 +36,7 @@ except:
 # --- application class   ----------------------------------------------------
 
 class PirateAudio(SpeechCli):
-  """ application class """
+  """ Bhojpur Speech application class """
 
   # --- constructor   --------------------------------------------------------
 
@@ -124,6 +124,10 @@ if __name__ == '__main__':
 
   # set local to default from environment
   locale.setlocale(locale.LC_ALL, '')
+
+  print("Bhojpur Speech pirate audio (online)")
+  print("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+  print("All rights reserved.\n")
 
   # create client-class and parse arguments
   app = PirateAudio()

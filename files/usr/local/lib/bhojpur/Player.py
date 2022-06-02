@@ -30,7 +30,7 @@ import os, time, datetime, subprocess, threading, copy, queue
 from bhojpur import Base
 
 class Player(Base):
-  """ Player-controller """
+  """ Bhojpur Speech Player controller """
 
   def __init__(self,app):
     """ initialization """
@@ -89,7 +89,7 @@ class Player(Base):
   # --- return persistent state of this class   -------------------------------
 
   def get_persistent_state(self):
-    """ return persistent state (overrides SRBase.get_pesistent_state()) """
+    """ return persistent state (overrides Base.get_pesistent_state()) """
     return {
       'player_dir': self._dir,
       'player_file': self._file
@@ -98,7 +98,7 @@ class Player(Base):
   # --- restore persistent state of this class   ------------------------------
 
   def set_persistent_state(self,state_map):
-    """ restore persistent state (overrides SRBase.set_pesistent_state()) """
+    """ restore persistent state (overrides Base.set_pesistent_state()) """
 
     self.msg("Player: restoring persistent state")
     if 'player_dir' in state_map:

@@ -59,7 +59,7 @@ class WebServer(Base):
     """ read configuration from config-file """
 
     # section [WEB]
-    self._port = int(self.get_value(self._app.parser,"WEB","port",9026))
+    self._port = int(self.get_value(self._app.parser,"WEB","port",8026))
     self._host = self.get_value(self._app.parser,"WEB","host","0.0.0.0")
 
     default_web_root = os.path.realpath(

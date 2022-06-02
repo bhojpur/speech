@@ -34,7 +34,7 @@ from bhojpur import *
 # --- main application class   ----------------------------------------------
 
 class BhojpurSpeech(Base):
-  """ main application class """
+  """ main Bhojpur Speech web application class """
 
   VERSION = "1.0.0"
 
@@ -117,7 +117,7 @@ class BhojpurSpeech(Base):
   def _get_version(self):
     """ return version """
 
-    self.msg("Bhojpur Speech: online version: %s" % BhojpurSpeech.VERSION)
+    self.msg("Bhojpur Speech server engine (online v%s)" % BhojpurSpeech.VERSION)
     return BhojpurSpeech.VERSION
 
   # --- return state   -----------------------------------------------------
@@ -250,7 +250,7 @@ class BhojpurSpeech(Base):
   # --- return persistent state of this class   -------------------------------
 
   def get_persistent_state(self):
-    """ return persistent state (overrides SRBase.get_pesistent_state()) """
+    """ return persistent state (overrides Base.get_pesistent_state()) """
     return {
       'mode': self._state['mode']
       }
@@ -258,7 +258,7 @@ class BhojpurSpeech(Base):
   # --- restore persistent state of this class   ------------------------------
 
   def set_persistent_state(self,state_map):
-    """ restore persistent state (overrides SRBase.set_pesistent_state()) """
+    """ restore persistent state (overrides Base.set_pesistent_state()) """
 
     self.msg("Bhojpur Speech: restoring persistent state")
     if 'mode' in state_map:

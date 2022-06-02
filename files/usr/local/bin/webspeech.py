@@ -34,7 +34,7 @@ from   argparse import ArgumentParser
 
 # --- application imports   --------------------------------------------------
 
-sys.path.insert(1, os.path.join(
+sys.path.append(os.path.join(
   os.path.dirname(sys.argv[0]),"../lib"))
 
 from bhojpur import *
@@ -107,7 +107,7 @@ def process_events(app,options,queue):
         break
     else:
       break
-  app.msg("Bhojpur Speech: engine finished processing events")
+  app.msg("Bhojpur Speech: server engine finished processing events")
   try:
     os.kill(os.getpid(), signal.SIGTERM)
   except:
@@ -126,12 +126,8 @@ if __name__ == '__main__':
   options.pgm_dir = os.path.dirname(os.path.abspath(__file__))
   check_options(options)
 
-  BHOJPURSPEECH_AVAILABLE = True
-  try:
-    from ..lib.webspeech import BhojpurSpeech
-  except ImportError:
-    BHOJPURPEECH_AVAILABLE = False
-    print("[WARNING] Unable to import BhojpurSpeech, pre-compiling ops will be disabled.")
+  print("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+  print("All rights reserved.\n")
 
   app = BhojpurSpeech(options)
 
@@ -141,7 +137,7 @@ if __name__ == '__main__':
 
   if options.do_list:
     if not options.quiet:
-      app.msg("Bhojpur Speech: online version %s" % app.api.get_version(),force=True)
+      app.msg("Bhojpur Speech server engine (online v%s)" % app.api.get_version(),force=True)
     channels = app.api.bhojpur_get_channels()
     PRINT_CHANNEL_FMT="{0:2d}: {1}"
     for channel in channels:

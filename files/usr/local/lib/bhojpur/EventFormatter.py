@@ -31,7 +31,7 @@ class EventFormatter(object):
 
   # --- format map: type:format   ---------------------------------------------
   _FMT_MAP = {
-    'version': 'Bhojpur Speech online version {value}',
+    'version': 'Bhojpur Speech server engine (online v{value})',
     'icy_meta': '{value}',
     'icy_name': '{value}',
     'rec_start': 'recording {name} for {duration} minutes',

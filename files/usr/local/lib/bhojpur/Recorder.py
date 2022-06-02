@@ -145,17 +145,20 @@ class Recorder(Thread,Base):
   def rec_start(self,nr=0,sync=False):
     """ start recording (argument is channel number) """
 
-    channel = self._api.bhojpur_get_channel(nr)
-    self.msg("Recorder: start recording of channel %d (%s)" %
+    try:
+      channel = self._api.bhojpur_get_channel(nr)
+      self.msg("Recorder: start recording of channel %d (%s)" %
                                                 (channel['nr'],channel['name']))
-    if self._rec_stop_event is None:
-      # no recording ongoing, start it
-      self._rec_stop_event = threading.Event()
-      if not sync:
-        self._rec_thread = Thread(target=self.record_stream,args=(channel,))
-        self._rec_thread.start()
-      else:
-        self.record_stream(channel)
+      if self._rec_stop_event is None:
+        # no recording ongoing, start it
+        self._rec_stop_event = threading.Event()
+        if not sync:
+          self._rec_thread = Thread(target=self.record_stream,args=(channel,))
+          self._rec_thread.start()
+        else:
+          self.record_stream(channel)
+    except:
+      print("Recorder: speech channel", nr, "not found yet")
 
   # --- stop recording   ------------------------------------------------------
 

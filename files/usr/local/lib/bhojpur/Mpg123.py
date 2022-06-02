@@ -32,7 +32,7 @@ import queue, collections, time
 from bhojpur import Base
 
 class Mpg123(Base):
-  """ mpg123 control-object """
+  """ mpg123 audio player control-object """
 
   def __init__(self,app):
     """ initialization """
@@ -80,7 +80,7 @@ class Mpg123(Base):
   # --- return persistent state of this class   -------------------------------
 
   def get_persistent_state(self):
-    """ return persistent state (overrides SRBase.get_pesistent_state()) """
+    """ return persistent state (overrides Base.get_pesistent_state()) """
     return {
       'volume': self._volume if not self._mute else self._vol_old
       }
@@ -88,7 +88,7 @@ class Mpg123(Base):
   # --- restore persistent state of this class   ------------------------------
 
   def set_persistent_state(self,state_map):
-    """ restore persistent state (overrides SRBase.set_pesistent_state()) """
+    """ restore persistent state (overrides Base.set_pesistent_state()) """
 
     self.msg("Mpg123: restoring persistent state")
     if 'volume' in state_map:
@@ -113,7 +113,7 @@ class Mpg123(Base):
     opts = shlex.split(self._mpg123_opts)
     args += opts
 
-    self.msg("Mpg123: starting mpg123 with args %r" % (args,))
+    self.msg("Mpg123: starting Bhojpur Speech mpg123 audio player with args %r" % (args,))
     # start process with line-buffered stdin/stdout
     self._process = subprocess.Popen(args,bufsize=1,
                                      universal_newlines=True,
