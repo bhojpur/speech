@@ -26,6 +26,7 @@ import (
 	lang_detection "github.com/bhojpur/speech/pkg/service/lang-detection"
 	"github.com/bhojpur/speech/pkg/service/moderation"
 	"github.com/bhojpur/speech/pkg/utils"
+	"github.com/bhojpur/speech/pkg/utils/repo"
 	"github.com/bhojpur/speech/pkg/utils/tts"
 	"github.com/bhojpur/speech/pkg/utils/voices"
 )
@@ -45,12 +46,12 @@ type GoTtsService struct {
 	filter              moderation.Filter
 	volume              float64
 	from                string
-	repo                utils.SettingRepo
+	repo                repo.SettingRepo
 	langDetector        lang_detection.LanguageDetectionService
 	langDetectorEnabled bool
 }
 
-func NewGoTtsService(language string, filter moderation.Filter, volume float64, repo utils.SettingRepo, langDetectorEnabled bool, langDetector lang_detection.LanguageDetectionService) *GoTtsService {
+func NewGoTtsService(language string, filter moderation.Filter, volume float64, repo repo.SettingRepo, langDetectorEnabled bool, langDetector lang_detection.LanguageDetectionService) *GoTtsService {
 	s := new(GoTtsService)
 	if len(language) == 0 {
 		language = voices.English

@@ -1,4 +1,4 @@
-package lang_detection
+package voice
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -21,47 +21,29 @@ package lang_detection
 // THE SOFTWARE.
 
 import (
-	"errors"
-	"strings"
+	"testing"
 
-	spoken "github.com/bhojpur/speech/pkg/language"
+	langdetection "github.com/bhojpur/speech/pkg/service/lang-detection"
+	"github.com/bhojpur/speech/pkg/service/moderation"
+	"github.com/stretchr/testify/assert"
 )
 
-var DefaultLanguages = []spoken.Language{
-	spoken.English,
-	spoken.Hindi,
-	spoken.Spanish,
-	spoken.French,
-	spoken.German,
-	spoken.Russian,
-}
+func TestName(t *testing.T) {
+	detectionService := langdetection.NewLingualDetectionService(langdetection.DefaultLanguages)
 
-type Language string
-
-var ErrUnsupportedLanguage = errors.New("unsupported language")
-
-type LanguageDetectionService interface {
-	Detect(text string) (*Language, error)
-}
-
-type LingualDetectionService struct {
-	detector spoken.LanguageDetector
-}
-
-func NewLingualDetectionService(languages []spoken.Language) *LingualDetectionService {
-	return &LingualDetectionService{
-		detector: spoken.NewLanguageDetectorBuilder().
-			FromLanguages(languages...).
-			Build(),
+	service := NewGoTtsService("", moderation.NewFilterDefault("", ""), 1, nil, true, detectionService)
+	tests := []struct {
+		input    string
+		language string
+	}{
+		{"Each language is assigned a two-letter!", "english"},
+		{"每种语言分配一个两个字母!", "chinese"},
+		{"Jeder Sprache wird ein Zweibuchstabe zugewiesen!", "german"},
+		{"A cada idioma se le asigna una letra de dos letras!", "spanish"},
+		{"Chaque langue se voit attribuer une lettre à deux lettres!", "french"},
+		{"Каждому языку присваивается двухбуквенный символ!", "русский"},
 	}
-}
-
-func (s *LingualDetectionService) Detect(text string) (*Language, error) {
-	lang, ok := s.detector.DetectLanguageOf(text)
-	if !ok {
-		return nil, ErrUnsupportedLanguage
+	for _, test := range tests {
+		assert.NoError(t, service.Speak(test.input))
 	}
-
-	language := Language(strings.ToLower(lang.IsoCode639_1().String()))
-	return &language, nil
 }

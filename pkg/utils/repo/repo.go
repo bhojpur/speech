@@ -1,4 +1,4 @@
-package utils
+package repo
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -20,7 +20,11 @@ package utils
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+import (
+	"github.com/bhojpur/speech/pkg/utils/database"
+)
+
 type SettingRepo interface {
-	GetSettings() (*SettingDB, error)
-	SaveSettings(settings *SettingDB) error
+	GetSettings() (*database.SettingDB, error)
+	SaveSettings(settings *database.SettingDB) error
 }

@@ -1,4 +1,4 @@
-package utils
+package database
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -24,6 +24,7 @@ import (
 	"strings"
 
 	"github.com/bhojpur/speech/pkg/service/moderation"
+	"github.com/bhojpur/speech/pkg/utils"
 )
 
 type SettingDB struct {
@@ -86,11 +87,11 @@ func (s *Setting) SetIgnoreWords(str string) {
 }
 
 func (s *Setting) StoreIgnoreWord(word string) {
-	s.IgnoreWords = ArrayStore(s.IgnoreWords, word)
+	s.IgnoreWords = utils.ArrayStore(s.IgnoreWords, word)
 }
 
 func (s *Setting) DeleteIgnoreWord(word string) {
-	s.IgnoreWords = ArrayDelete(s.IgnoreWords, word)
+	s.IgnoreWords = utils.ArrayDelete(s.IgnoreWords, word)
 }
 
 func (s *Setting) SetUserBanList(str string) {
@@ -98,11 +99,11 @@ func (s *Setting) SetUserBanList(str string) {
 }
 
 func (s *Setting) StoreUserBanList(user string) {
-	s.UserBanList = ArrayStore(s.UserBanList, user)
+	s.UserBanList = utils.ArrayStore(s.UserBanList, user)
 }
 
 func (s *Setting) DeleteUserBanList(user string) {
-	s.UserBanList = ArrayDelete(s.UserBanList, user)
+	s.UserBanList = utils.ArrayDelete(s.UserBanList, user)
 }
 
 func (s *Setting) SetChannelsToListen(str string) {
@@ -110,11 +111,11 @@ func (s *Setting) SetChannelsToListen(str string) {
 }
 
 func (s *Setting) StoreChannelsToListen(user string) {
-	s.ChannelsToListen = ArrayStore(s.ChannelsToListen, user)
+	s.ChannelsToListen = utils.ArrayStore(s.ChannelsToListen, user)
 }
 
 func (s *Setting) DeleteChannelsToListen(user string) {
-	s.ChannelsToListen = ArrayDelete(s.ChannelsToListen, user)
+	s.ChannelsToListen = utils.ArrayDelete(s.ChannelsToListen, user)
 }
 
 func (s *Setting) SetReplacementPair(key, value string) {

@@ -1,4 +1,4 @@
-package lang_detection
+package utils
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -19,49 +19,3 @@ package lang_detection
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-
-import (
-	"errors"
-	"strings"
-
-	spoken "github.com/bhojpur/speech/pkg/language"
-)
-
-var DefaultLanguages = []spoken.Language{
-	spoken.English,
-	spoken.Hindi,
-	spoken.Spanish,
-	spoken.French,
-	spoken.German,
-	spoken.Russian,
-}
-
-type Language string
-
-var ErrUnsupportedLanguage = errors.New("unsupported language")
-
-type LanguageDetectionService interface {
-	Detect(text string) (*Language, error)
-}
-
-type LingualDetectionService struct {
-	detector spoken.LanguageDetector
-}
-
-func NewLingualDetectionService(languages []spoken.Language) *LingualDetectionService {
-	return &LingualDetectionService{
-		detector: spoken.NewLanguageDetectorBuilder().
-			FromLanguages(languages...).
-			Build(),
-	}
-}
-
-func (s *LingualDetectionService) Detect(text string) (*Language, error) {
-	lang, ok := s.detector.DetectLanguageOf(text)
-	if !ok {
-		return nil, ErrUnsupportedLanguage
-	}
-
-	language := Language(strings.ToLower(lang.IsoCode639_1().String()))
-	return &language, nil
-}

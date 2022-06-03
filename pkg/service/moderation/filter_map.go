@@ -23,7 +23,7 @@ package moderation
 import (
 	"strings"
 
-	"github.com/bhojpur/speech/pkg/utils"
+	utils "github.com/bhojpur/speech/pkg/utils"
 )
 
 type FilterMap struct {
