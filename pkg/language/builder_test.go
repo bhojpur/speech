@@ -1,0 +1,292 @@
+package language
+
+// Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestLanguageDetectorBuilder_FromAllLanguages(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguages()
+	assert.ElementsMatch(t, AllLanguages(), builder.getLanguages())
+	assert.Equal(t, 0.0, builder.getMinimumRelativeDistance())
+
+	builder.WithMinimumRelativeDistance(0.2)
+	assert.Equal(t, 0.2, builder.getMinimumRelativeDistance())
+}
+
+func TestLanguageDetectorBuilder_FromAllSpokenLanguages(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllSpokenLanguages()
+	assert.ElementsMatch(t, AllSpokenLanguages(), builder.getLanguages())
+	assert.Equal(t, 0.0, builder.getMinimumRelativeDistance())
+
+	builder.WithMinimumRelativeDistance(0.2)
+	assert.Equal(t, 0.2, builder.getMinimumRelativeDistance())
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithArabicScript(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguagesWithArabicScript()
+	assert.ElementsMatch(t, AllLanguagesWithArabicScript(), builder.getLanguages())
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithCyrillicScript(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguagesWithCyrillicScript()
+	assert.ElementsMatch(t, AllLanguagesWithCyrillicScript(), builder.getLanguages())
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithDevanagariScript(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguagesWithDevanagariScript()
+	assert.ElementsMatch(t, AllLanguagesWithDevanagariScript(), builder.getLanguages())
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithLatinScript(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguagesWithLatinScript()
+	assert.ElementsMatch(t, AllLanguagesWithLatinScript(), builder.getLanguages())
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithout(t *testing.T) {
+	builder := NewLanguageDetectorBuilder().FromAllLanguagesWithout(Turkish, Romanian)
+	assert.ElementsMatch(
+		t,
+		[]Language{
+			Afrikaans,
+			Albanian,
+			Arabic,
+			Armenian,
+			Azerbaijani,
+			Basque,
+			Belarusian,
+			Bengali,
+			Bokmal,
+			Bosnian,
+			Bulgarian,
+			Catalan,
+			Chinese,
+			Croatian,
+			Czech,
+			Danish,
+			Dutch,
+			English,
+			Esperanto,
+			Estonian,
+			Finnish,
+			French,
+			Ganda,
+			Georgian,
+			German,
+			Greek,
+			Gujarati,
+			Hebrew,
+			Hindi,
+			Hungarian,
+			Icelandic,
+			Indonesian,
+			Irish,
+			Italian,
+			Japanese,
+			Kazakh,
+			Korean,
+			Latin,
+			Latvian,
+			Lithuanian,
+			Macedonian,
+			Malay,
+			Maori,
+			Marathi,
+			Mongolian,
+			Nynorsk,
+			Persian,
+			Polish,
+			Portuguese,
+			Punjabi,
+			Russian,
+			Serbian,
+			Shona,
+			Slovak,
+			Slovene,
+			Somali,
+			Sotho,
+			Spanish,
+			Swahili,
+			Swedish,
+			Tagalog,
+			Tamil,
+			Telugu,
+			Thai,
+			Tsonga,
+			Tswana,
+			Ukrainian,
+			Urdu,
+			Vietnamese,
+			Welsh,
+			Xhosa,
+			Yoruba,
+			Zulu,
+		},
+		builder.getLanguages(),
+	)
+}
+
+func TestLanguageDetectorBuilder_FromAllLanguagesWithout_Panics(t *testing.T) {
+	assert.PanicsWithValue(
+		t,
+		missingLanguageMessage,
+		func() {
+			NewLanguageDetectorBuilder().FromAllLanguagesWithout(AllLanguages()[1:]...)
+		},
+	)
+}
+
+func TestLanguageDetectorBuilder_FromLanguages(t *testing.T) {
+	testCases := []struct {
+		languages         []Language
+		expectedLanguages []Language
+	}{
+		{
+			[]Language{German, Zulu},
+			[]Language{German, Zulu},
+		},
+		{
+			[]Language{German, Zulu, Unknown},
+			[]Language{German, Zulu},
+		},
+	}
+	for _, testCase := range testCases {
+		builder := NewLanguageDetectorBuilder().FromLanguages(testCase.languages...)
+		assert.ElementsMatch(t, testCase.expectedLanguages, builder.getLanguages())
+	}
+}
+
+func TestLanguageDetectorBuilder_FromLanguages_Panics(t *testing.T) {
+	testCases := []struct {
+		languages []Language
+	}{
+		{[]Language{German}},
+		{[]Language{German, Unknown}},
+	}
+	for _, testCase := range testCases {
+		assert.PanicsWithValue(
+			t,
+			missingLanguageMessage,
+			func() {
+				NewLanguageDetectorBuilder().FromLanguages(testCase.languages...)
+			},
+		)
+	}
+}
+
+func TestLanguageDetectorBuilder_FromIsoCodes639_1(t *testing.T) {
+	testCases := []struct {
+		isoCodes          []IsoCode639_1
+		expectedLanguages []Language
+	}{
+		{
+			[]IsoCode639_1{DE, ZU},
+			[]Language{German, Zulu},
+		},
+		{
+			[]IsoCode639_1{DE, ZU, UnknownIsoCode639_1},
+			[]Language{German, Zulu},
+		},
+	}
+	for _, testCase := range testCases {
+		builder := NewLanguageDetectorBuilder().FromIsoCodes639_1(testCase.isoCodes...)
+		assert.ElementsMatch(t, testCase.expectedLanguages, builder.getLanguages())
+	}
+}
+
+func TestLanguageDetectorBuilder_FromIsoCodes639_1_Panics(t *testing.T) {
+	testCases := []struct {
+		isoCodes []IsoCode639_1
+	}{
+		{[]IsoCode639_1{DE}},
+		{[]IsoCode639_1{DE, UnknownIsoCode639_1}},
+	}
+	for _, testCase := range testCases {
+		assert.PanicsWithValue(
+			t,
+			missingLanguageMessage,
+			func() {
+				NewLanguageDetectorBuilder().FromIsoCodes639_1(testCase.isoCodes...)
+			},
+		)
+	}
+}
+
+func TestLanguageDetectorBuilder_FromIsoCodes639_3(t *testing.T) {
+	testCases := []struct {
+		isoCodes          []IsoCode639_3
+		expectedLanguages []Language
+	}{
+		{
+			[]IsoCode639_3{DEU, ZUL},
+			[]Language{German, Zulu},
+		},
+		{
+			[]IsoCode639_3{DEU, ZUL, UnknownIsoCode639_3},
+			[]Language{German, Zulu},
+		},
+	}
+	for _, testCase := range testCases {
+		builder := NewLanguageDetectorBuilder().FromIsoCodes639_3(testCase.isoCodes...)
+		assert.ElementsMatch(t, testCase.expectedLanguages, builder.getLanguages())
+	}
+}
+
+func TestLanguageDetectorBuilder_FromIsoCodes639_3_Panics(t *testing.T) {
+	testCases := []struct {
+		isoCodes []IsoCode639_3
+	}{
+		{[]IsoCode639_3{DEU}},
+		{[]IsoCode639_3{DEU, UnknownIsoCode639_3}},
+	}
+	for _, testCase := range testCases {
+		assert.PanicsWithValue(
+			t,
+			missingLanguageMessage,
+			func() {
+				NewLanguageDetectorBuilder().FromIsoCodes639_3(testCase.isoCodes...)
+			},
+		)
+	}
+}
+
+func TestLanguageDetectorBuilder_WithMinimumRelativeDistance_Panics_1(t *testing.T) {
+	assert.PanicsWithValue(
+		t,
+		"Minimum relative distance must lie in between 0.0 and 0.99",
+		func() {
+			NewLanguageDetectorBuilder().FromAllLanguages().WithMinimumRelativeDistance(-2.3)
+		},
+	)
+}
+
+func TestLanguageDetectorBuilder_WithMinimumRelativeDistance_Panics_2(t *testing.T) {
+	assert.PanicsWithValue(
+		t,
+		"Minimum relative distance must lie in between 0.0 and 0.99",
+		func() {
+			NewLanguageDetectorBuilder().FromAllLanguages().WithMinimumRelativeDistance(1.7)
+		},
+	)
+}

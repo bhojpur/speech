@@ -98,7 +98,7 @@ venv
 *.exe
 *.exe~
 *.dll
-*.zip
+# *.zip # commented to include language models
 *.tar.gz
 *pb2*.py
 model
