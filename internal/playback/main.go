@@ -34,8 +34,12 @@ import (
 )
 
 func main() {
+	fmt.Println("Bhojpur Speech playback utility")
+	fmt.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	fmt.Printf("All rights reserved.\n")
+
 	if len(os.Args) < 2 {
-		fmt.Println("No input file.")
+		fmt.Println("No input audio file.")
 		os.Exit(1)
 	}
 
@@ -74,7 +78,7 @@ func main() {
 		channels = 2
 		sampleRate = uint32(m.SampleRate())
 	default:
-		fmt.Println("Not a valid file.")
+		fmt.Println("Not a valid audio file.")
 		os.Exit(1)
 	}
 
@@ -117,6 +121,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Press Enter to quit...")
+	fmt.Println("Press ENTER key to quit this program...")
 	fmt.Scanln()
 }

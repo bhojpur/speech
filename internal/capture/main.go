@@ -31,6 +31,10 @@ import (
 )
 
 func main() {
+	fmt.Println("Bhojpur Speech capture utility")
+	fmt.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	fmt.Printf("All rights reserved.\n")
+
 	ctx, err := engine.InitContext(nil, engine.ContextConfig{}, func(message string) {
 		fmt.Printf("LOG <%v>\n", message)
 	})
@@ -68,7 +72,7 @@ func main() {
 
 	}
 
-	fmt.Println("Recording...")
+	fmt.Println("Please speak now, I am recording your voice...")
 	captureCallbacks := engine.DeviceCallbacks{
 		Data: onRecvFrames,
 	}
@@ -84,7 +88,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Press Enter to stop recording...")
+	fmt.Println("Press ENTER key to stop recording...")
 	fmt.Scanln()
 
 	device.Uninit()
@@ -104,7 +108,7 @@ func main() {
 		}
 	}
 
-	fmt.Println("Playing...")
+	fmt.Println("Now, I am playing your recorded voice...")
 	playbackCallbacks := engine.DeviceCallbacks{
 		Data: onSendFrames,
 	}
@@ -121,7 +125,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Press Enter to quit...")
+	fmt.Println("Press ENTER key to quit this program...")
 	fmt.Scanln()
 
 	device.Uninit()

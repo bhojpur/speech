@@ -1,4 +1,4 @@
-package tts
+package synthesis
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -23,13 +23,13 @@ package tts
 import (
 	"log"
 
-	"github.com/bhojpur/speech/pkg/utils/voices"
+	"github.com/bhojpur/speech/pkg/voices"
 
 	"testing"
 )
 
 func TestSpeech_Speak(t *testing.T) {
-	speech := Speech{Folder: "audio", Language: voices.English, Volume: 0, Speed: 1}
+	speech := Speech{Folder: "audios", Language: voices.English, Volume: 0, Speed: 1}
 	err := speech.Speak("Test")
 	if err != nil {
 		log.Fatal(err)
@@ -37,7 +37,7 @@ func TestSpeech_Speak(t *testing.T) {
 }
 
 func TestSpeech_Speak_voice_UkEnglish(t *testing.T) {
-	speech := Speech{Folder: "audio", Language: voices.EnglishUK, Volume: 0, Speed: 1}
+	speech := Speech{Folder: "audios", Language: voices.EnglishUK, Volume: 0, Speed: 1}
 	err := speech.Speak("Lancaster")
 	if err != nil {
 		log.Fatal(err)
@@ -45,7 +45,7 @@ func TestSpeech_Speak_voice_UkEnglish(t *testing.T) {
 }
 
 func TestSpeech_Speak_voice_Japanese(t *testing.T) {
-	speech := Speech{Folder: "audio", Language: voices.Japanese, Volume: 0, Speed: 1}
+	speech := Speech{Folder: "audios", Language: voices.Japanese, Volume: 0, Speed: 1}
 	err := speech.Speak("Test")
 	if err != nil {
 		log.Fatal(err)
@@ -53,7 +53,7 @@ func TestSpeech_Speak_voice_Japanese(t *testing.T) {
 }
 
 func TestSpeech_CreateSpeechFile(t *testing.T) {
-	speech := Speech{Folder: "audio", Language: voices.English, Volume: 0, Speed: 1}
+	speech := Speech{Folder: "audios", Language: voices.English, Volume: 0, Speed: 1}
 	_, err := speech.CreateSpeechFile("Test", "testfilename")
 	if err != nil {
 		t.Fatalf("CreateSpeechFile fail %v", err)
@@ -61,7 +61,7 @@ func TestSpeech_CreateSpeechFile(t *testing.T) {
 }
 
 func TestSpeech_(t *testing.T) {
-	speech := Speech{Folder: "audio", Language: voices.English, Volume: 0, Speed: 1}
+	speech := Speech{Folder: "audios", Language: voices.English, Volume: 0, Speed: 1}
 	f, err := speech.CreateSpeechFile("Test", "testplay")
 	if err != nil {
 		t.Fatalf("CreateSpeechFile fail %v", err)

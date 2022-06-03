@@ -25,10 +25,10 @@ import (
 
 	lang_detection "github.com/bhojpur/speech/pkg/service/lang-detection"
 	"github.com/bhojpur/speech/pkg/service/moderation"
+	"github.com/bhojpur/speech/pkg/synthesis"
 	"github.com/bhojpur/speech/pkg/utils"
 	"github.com/bhojpur/speech/pkg/utils/repo"
-	"github.com/bhojpur/speech/pkg/utils/tts"
-	"github.com/bhojpur/speech/pkg/utils/voices"
+	"github.com/bhojpur/speech/pkg/voices"
 )
 
 type SetterFromService interface {
@@ -41,7 +41,7 @@ type SpeechVoiceService interface {
 }
 
 type GoTtsService struct {
-	speech              tts.Speech
+	speech              synthesis.Speech
 	language            string
 	filter              moderation.Filter
 	volume              float64
@@ -135,6 +135,6 @@ func (s *GoTtsService) Speak(text string) error {
 	return s.speech.Speak(result)
 }
 
-func NewSpeech(language string, volume float64) tts.Speech {
-	return tts.Speech{Folder: "audio", Language: language, Volume: volume, Speed: 1}
+func NewSpeech(language string, volume float64) synthesis.Speech {
+	return synthesis.Speech{Folder: "audios", Language: language, Volume: volume, Speed: 1}
 }

@@ -1,4 +1,4 @@
-package tts
+package synthesis
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -36,7 +36,7 @@ import (
  *
  * Use:
  *
- * speech := tts.Speech{Folder: "audio", Language: "en", Volume: 0, Speed: 1}
+ * speech := tts.Speech{Folder: "audios", Language: "en", Volume: 0, Speed: 1}
  */
 
 // Speech struct
