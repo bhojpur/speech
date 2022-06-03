@@ -27,7 +27,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/bhojpur/speech/go/coqui"
+	"github.com/bhojpur/speech/pkg/coqui"
 	"github.com/cryptix/wav"
 )
 

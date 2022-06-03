@@ -26,8 +26,8 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/bhojpur/speech/go/mpg123"
-	"github.com/bhojpur/speech/go/portaudio"
+	"github.com/bhojpur/speech/pkg/mpg123"
+	"github.com/bhojpur/speech/pkg/portaudio"
 	"github.com/bhojpur/speech/pkg/utils"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )

@@ -12,10 +12,6 @@ tasks:
     build-tools:
         desc: Build the Bhojpur Speech software build tools
         cmds:
-        - pyinstaller --onefile ./files/usr/local/bin/webspeech.py
-        - GOFLAGS=-mod=mod go build -o dist/speechrec ./recorder.go 
-        - chmod 755 dist/speechrec
-        - cp dist/speechrec $GOPATH/bin
         - GOFLAGS=-mod=mod go build -o dist/speechwss ./cmd/websocket/main.go 
         - chmod 755 dist/speechwss
         - cp dist/speechwss $GOPATH/bin
@@ -25,6 +21,17 @@ tasks:
         - GOFLAGS=-mod=mod go build -o dist/speechsvr ./cmd/server/main.go 
         - chmod 755 dist/speechsvr
         - cp dist/speechsvr $GOPATH/bin
+        - GOFLAGS=-mod=mod go build -o dist/speechview ./cmd/oscilloscope/main.go 
+        - chmod 755 dist/speechview
+        - cp dist/speechview $GOPATH/bin
+        - GOFLAGS=-mod=mod go build -o dist/speechrec ./recorder.go 
+        - chmod 755 dist/speechrec
+        - cp dist/speechrec $GOPATH/bin
+
+    build-web:
+        desc: Build the Bhojpur Speech web applications
+        cmds:
+        - pyinstaller --onefile ./files/usr/local/bin/webspeech.py
 
     build-desktop:
         desc: Build the desktop application for current OS

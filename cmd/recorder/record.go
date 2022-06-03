@@ -30,7 +30,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bhojpur/speech/go/portaudio"
+	"github.com/bhojpur/speech/pkg/portaudio"
 	"github.com/coder/flog"
 	"github.com/spf13/pflag"
 	"go.coder.com/cli"

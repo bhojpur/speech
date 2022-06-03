@@ -26,7 +26,6 @@ import numpy
 import phash
 import pickle
 
-
 def get_hash(mel_basis, wavfn, start, end):
      y, sr = librosa.load(wavfn, sr=16000)
      y = y[int(start * sr):int(end * sr)]

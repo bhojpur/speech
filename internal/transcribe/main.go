@@ -28,7 +28,7 @@ import (
 	"log"
 	"os"
 
-	vosk "github.com/bhojpur/speech/go"
+	vosk "github.com/bhojpur/speech/pkg/vosk"
 )
 
 func main() {

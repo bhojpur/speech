@@ -32,7 +32,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bhojpur/speech/go/portaudio"
+	"github.com/bhojpur/speech/pkg/portaudio"
 	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
 	"github.com/bhojpur/speech/pkg/utils"
 	"google.golang.org/grpc"

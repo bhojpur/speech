@@ -24,7 +24,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/bhojpur/speech/go/mpg123"
+	"github.com/bhojpur/speech/pkg/mpg123"
 	"os"
 )
 

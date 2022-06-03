@@ -47,9 +47,11 @@ type Message struct {
 var m Message
 
 func main() {
-
+	log.Info("Bhojpur Speech client engine (websocket)")
+	log.Info("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Info("All rights reserved.\n\n")
 	if len(os.Args) < 2 {
-		panic("Please specify second argument")
+		panic("Please specify second argument as filename to be read")
 	}
 
 	u := url.URL{Scheme: "ws", Host: Host + ":" + Port, Path: ""}

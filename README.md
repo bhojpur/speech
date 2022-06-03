@@ -11,6 +11,7 @@ leverages [Vosk](http://alphacephei.com/vosk/) framework that works in offline m
 - Offline mode automated `speech recognition` and `speech synthesis`
 - A web-based application (using Python) for online speech recognition
 - `Python`-based and `Go`-based software framework using C/C++ libraries
+- Advanced tools (e.g. Oscilloscope, Recorder, Player) for data processing
 - Utilities to build speech training models
 
 ## Prerequisites
