@@ -23,6 +23,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -84,6 +85,10 @@ func cmdSerial(cmd *cli.Cmd) {
 }
 
 func main() {
+	log.Println("Bhojpur Speech oscilloscope utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	app := cli.App("speechview", "An audio signal analysis ocilloscope using standard I/O ports")
 
 	app.Command("source", "need specific a signal source", func(cmd *cli.Cmd) {

@@ -1,4 +1,4 @@
-package main
+package espeak_test
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -20,36 +20,26 @@ package main
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-import (
-	"log"
-	"os"
+import "github.com/bhojpur/speech/pkg/espeak"
 
-	langdetection "github.com/bhojpur/speech/pkg/service/lang-detection"
-	"github.com/bhojpur/speech/pkg/synthesis"
-	voices "github.com/bhojpur/speech/pkg/voices"
-)
+func ExampleTextToSpeech() {
+	espeak.TextToSpeech("Hello world!", espeak.DefaultVoice, "play", nil)
+	// or set an outfile name to save it
+	// TextToSpeech("Hello world!", ENUSFemale, "hello-world.wav", nil)
+}
 
-func main() {
-	log.Println("Bhojpur Speech translate utility")
-	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
-	log.Println("All rights reserved.")
-
-	if len(os.Args) < 2 {
-		log.Println("\nNo input text provided")
-		log.Printf("Usage: translate [TEXT]\n")
-		os.Exit(1)
-	} else {
-		speech := synthesis.Speech{
-			Folder:   "audios",
-			Language: voices.English,
-			Volume:   0,
-			Speed:    1}
-
-		detectionService := langdetection.NewLingualDetectionService(langdetection.DefaultLanguages)
-		langDetected, _ := detectionService.Detect(os.Args[1])
-		lang := string(*langDetected)
-		log.Printf("Detected Language: %s\n", lang)
-
-		speech.Speak(os.Args[1])
+// ExampleTextToSpeech_second show usage with a non-default voice.
+func ExampleTextToSpeech_customVoice() {
+	// output of
+	//     ~$ espeak --voices=el
+	//     Pty Language Age/Gender VoiceName          File          Other Languages
+	//     5  el             M  greek                europe/el
+	//     7  el             M  greek-mbrola-1       mb/mb-gr2
+	greek := espeak.Voice{
+		Languages:  "el",
+		Gender:     espeak.Male,
+		Name:       "greek",
+		Identifier: "europe/el",
 	}
+	espeak.TextToSpeech("Γειά σου Κόσμε!", &greek, "play", nil)
 }

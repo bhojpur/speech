@@ -26,6 +26,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,6 +35,10 @@ import (
 )
 
 func main() {
+	log.Println("Bhojpur Speech G.711 Encoder utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	if len(os.Args) < 3 || os.Args[1] == "help" || os.Args[1] == "--help" || (os.Args[1] != "ulaw" && os.Args[1] != "alaw") {
 		fmt.Printf("%s Encodes 16bit 8kHz LPCM data to 8bit G711 PCM\n", os.Args[0])
 		fmt.Println("The program takes as input a list or wav or raw files, encodes them")
@@ -47,7 +52,7 @@ func main() {
 	for _, file := range os.Args[2:] {
 		err := encodeG711(file, format)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			exitCode = 1
 		}
 	}

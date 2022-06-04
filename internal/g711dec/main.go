@@ -25,6 +25,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,10 @@ import (
 )
 
 func main() {
+	log.Println("Bhojpur Speech G.711 Decoder utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	if len(os.Args) == 1 || os.Args[1] == "help" || os.Args[1] == "--help" {
 		fmt.Printf("%s Decodes 8bit G711 PCM data to raw 16 Bit signed LPCM\n", os.Args[0])
 		fmt.Println("The program takes as input a list A-law or u-law encoded files")
@@ -44,7 +49,7 @@ func main() {
 	for _, file := range os.Args[1:] {
 		err := decodeG711(file)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			exitCode = 1
 		}
 	}

@@ -1,4 +1,4 @@
-package main
+package native
 
 // Copyright (c) 2018 Bhojpur Consulting Private Limited, India. All rights reserved.
 
@@ -21,35 +21,53 @@ package main
 // THE SOFTWARE.
 
 import (
-	"log"
+	"errors"
+	"io/ioutil"
 	"os"
+	"testing"
 
-	langdetection "github.com/bhojpur/speech/pkg/service/lang-detection"
-	"github.com/bhojpur/speech/pkg/synthesis"
-	voices "github.com/bhojpur/speech/pkg/voices"
+	"github.com/bhojpur/speech/pkg/espeak"
 )
 
-func main() {
-	log.Println("Bhojpur Speech translate utility")
-	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
-	log.Println("All rights reserved.")
-
-	if len(os.Args) < 2 {
-		log.Println("\nNo input text provided")
-		log.Printf("Usage: translate [TEXT]\n")
-		os.Exit(1)
-	} else {
-		speech := synthesis.Speech{
-			Folder:   "audios",
-			Language: voices.English,
-			Volume:   0,
-			Speed:    1}
-
-		detectionService := langdetection.NewLingualDetectionService(langdetection.DefaultLanguages)
-		langDetected, _ := detectionService.Detect(os.Args[1])
-		lang := string(*langDetected)
-		log.Printf("Detected Language: %s\n", lang)
-
-		speech.Speak(os.Args[1])
+func TestTextToSpeech(t *testing.T) {
+	tmp, err := ioutil.TempDir("", "bhojpur-speech-native-test-*")
+	if err != nil {
+		t.Fatal(err)
 	}
+	defer os.RemoveAll(tmp)
+	p := espeak.NewParameters().WithDir(tmp)
+	t.Run("success", func(t *testing.T) {
+		samples, err := TextToSpeech("test speech", nil, "test", p)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if samples == 0 {
+			t.Errorf("0 samples written")
+		}
+	})
+	t.Run("errors", func(t *testing.T) {
+		for _, tt := range []struct {
+			name   string
+			text   string
+			params *espeak.Parameters
+			voice  *espeak.Voice
+			want   error
+		}{
+			{"empty text", "", nil, nil, espeak.ErrEmptyText},
+		} {
+			t.Run(tt.name, func(t *testing.T) {
+				s, err := TextToSpeech(tt.text, nil, "test", p)
+				if s != 0 {
+					t.Errorf("expected return samples 0 got %d", s)
+				}
+				if !errors.Is(err, tt.want) {
+
+				}
+				if err == nil {
+					t.Error("expected an error but didn't get one")
+				}
+			})
+		}
+	})
+
 }

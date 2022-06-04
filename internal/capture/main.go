@@ -25,21 +25,22 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	engine "github.com/bhojpur/speech/pkg/miniaudio"
 )
 
 func main() {
-	fmt.Println("Bhojpur Speech capture utility")
-	fmt.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
-	fmt.Printf("All rights reserved.\n")
+	log.Println("Bhojpur Speech capture utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
 
 	ctx, err := engine.InitContext(nil, engine.ContextConfig{}, func(message string) {
-		fmt.Printf("LOG <%v>\n", message)
+		log.Printf("LOG <%v>\n", message)
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	defer func() {
@@ -72,23 +73,23 @@ func main() {
 
 	}
 
-	fmt.Println("Please speak now, I am recording your voice...")
+	log.Println("Please speak now, I am recording your voice...")
 	captureCallbacks := engine.DeviceCallbacks{
 		Data: onRecvFrames,
 	}
 	device, err := engine.InitDevice(ctx.Context, deviceConfig, captureCallbacks)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	err = device.Start()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Press ENTER key to stop recording...")
+	log.Println("Press ENTER key to stop recording...")
 	fmt.Scanln()
 
 	device.Uninit()
@@ -108,24 +109,24 @@ func main() {
 		}
 	}
 
-	fmt.Println("Now, I am playing your recorded voice...")
+	log.Println("Now, I am playing your recorded voice...")
 	playbackCallbacks := engine.DeviceCallbacks{
 		Data: onSendFrames,
 	}
 
 	device, err = engine.InitDevice(ctx.Context, deviceConfig, playbackCallbacks)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
 	err = device.Start()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Press ENTER key to quit this program...")
+	log.Println("Press ENTER key to quit this program...")
 	fmt.Scanln()
 
 	device.Uninit()

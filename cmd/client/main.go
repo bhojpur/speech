@@ -32,8 +32,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/bhojpur/speech/pkg/portaudio"
 	pb "github.com/bhojpur/speech/pkg/api/v1/stream"
+	"github.com/bhojpur/speech/pkg/portaudio"
 	"github.com/bhojpur/speech/pkg/utils"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -41,6 +41,10 @@ import (
 )
 
 func main() {
+	log.Println("Bhojpur Speech streaming client (MP3)")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	wd, _ := os.Getwd()
 	certFile := filepath.Join(wd, "ssl", "cert.pem")
 	creds, err := credentials.NewClientTLSFromFile(certFile, "")
@@ -84,7 +88,7 @@ func main() {
 		}
 		log.Printf("Bhojpur Speech: client playing: %d - %s", res.GetSequence(), res.GetFilename())
 
-		// fmt.Println("audio data: ", res.GetData())
+		// log.Printf("audio data: ", res.GetData())
 
 		if portAudioStream == nil {
 			portAudioStream, err = portaudio.OpenDefaultStream(0, int(res.GetChannels()), float64(res.GetRate()), len(out), &out)

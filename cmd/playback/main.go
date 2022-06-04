@@ -23,6 +23,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -34,18 +35,18 @@ import (
 )
 
 func main() {
-	fmt.Println("Bhojpur Speech playback utility")
-	fmt.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
-	fmt.Printf("All rights reserved.\n")
+	log.Println("Bhojpur Speech playback utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
 
 	if len(os.Args) < 2 {
-		fmt.Println("No input audio file.")
+		log.Println("No input audio file.")
 		os.Exit(1)
 	}
 
 	file, err := os.Open(os.Args[1])
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
@@ -59,7 +60,7 @@ func main() {
 		w := wave.NewReader(file)
 		f, err := w.Format()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 
@@ -70,7 +71,7 @@ func main() {
 	case ".mp3":
 		m, err := mp3.NewDecoder(file)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			os.Exit(1)
 		}
 
@@ -78,15 +79,15 @@ func main() {
 		channels = 2
 		sampleRate = uint32(m.SampleRate())
 	default:
-		fmt.Println("Not a valid audio file.")
+		log.Println("Not a valid audio file.")
 		os.Exit(1)
 	}
 
 	ctx, err := engine.InitContext(nil, engine.ContextConfig{}, func(message string) {
-		fmt.Printf("LOG <%v>\n", message)
+		log.Printf("LOG <%v>\n", message)
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	defer func() {
@@ -110,17 +111,17 @@ func main() {
 	}
 	device, err := engine.InitDevice(ctx.Context, deviceConfig, deviceCallbacks)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 	defer device.Uninit()
 
 	err = device.Start()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Println("Press ENTER key to quit this program...")
+	log.Println("Press ENTER key to quit this program...")
 	fmt.Scanln()
 }

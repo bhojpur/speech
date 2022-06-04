@@ -53,6 +53,10 @@ func metadataToStrings(m *coqui.Metadata) []string {
 }
 
 func main() {
+	log.Println("Bhojpur Speech text-to-speech (Coqui)")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	flag.Parse()
 	log.SetFlags(0)
 

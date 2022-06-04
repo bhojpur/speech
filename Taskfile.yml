@@ -12,9 +12,9 @@ tasks:
     build-tools:
         desc: Build the Bhojpur Speech software build tools
         cmds:
-        - GOFLAGS=-mod=mod go build -o dist/speechwss ./cmd/websocket/main.go 
-        - chmod 755 dist/speechwss
-        - cp dist/speechwss $GOPATH/bin
+        - GOFLAGS=-mod=mod go build -o dist/speechplay ./cmd/playback/main.go 
+        - chmod 755 dist/speechplay
+        - cp dist/speechplay $GOPATH/bin
         - GOFLAGS=-mod=mod go build -o dist/speechctl ./cmd/client/main.go 
         - chmod 755 dist/speechctl
         - cp dist/speechctl $GOPATH/bin

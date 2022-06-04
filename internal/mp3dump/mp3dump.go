@@ -24,11 +24,17 @@ package main
 
 import (
 	"fmt"
-	"github.com/bhojpur/speech/pkg/mpg123"
+	"log"
 	"os"
+
+	"github.com/bhojpur/speech/pkg/mpg123"
 )
 
 func main() {
+	log.Println("Bhojpur Speech MP3 Dump utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	// check command-line arguments
 	if len(os.Args) != 3 {
 		fmt.Fprintln(os.Stderr, "usage: mp3dump <infile.mp3> <outfile.raw>")

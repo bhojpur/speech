@@ -21,35 +21,36 @@ package main
 // THE SOFTWARE.
 
 import (
-	"log"
+	"fmt"
 	"os"
 
-	langdetection "github.com/bhojpur/speech/pkg/service/lang-detection"
-	"github.com/bhojpur/speech/pkg/synthesis"
-	voices "github.com/bhojpur/speech/pkg/voices"
+	"github.com/bhojpur/speech/pkg/espeak"
 )
 
 func main() {
-	log.Println("Bhojpur Speech translate utility")
-	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
-	log.Println("All rights reserved.")
+	fmt.Println("Bhojpur Speech text-to-speech utility")
+	fmt.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	fmt.Printf("All rights reserved.\n")
 
 	if len(os.Args) < 2 {
-		log.Println("\nNo input text provided")
-		log.Printf("Usage: translate [TEXT]\n")
+		fmt.Println("No input audio text provided.")
 		os.Exit(1)
-	} else {
-		speech := synthesis.Speech{
-			Folder:   "audios",
-			Language: voices.English,
-			Volume:   0,
-			Speed:    1}
-
-		detectionService := langdetection.NewLingualDetectionService(langdetection.DefaultLanguages)
-		langDetected, _ := detectionService.Detect(os.Args[1])
-		lang := string(*langDetected)
-		log.Printf("Detected Language: %s\n", lang)
-
-		speech.Speak(os.Args[1])
 	}
+
+	// need to call terminate so eSpeak can clean itself out
+	defer espeak.Terminate()
+	params := espeak.NewParameters().WithDir(".")
+	var written uint64
+	written, _ = espeak.TextToSpeech(
+		os.Args[1],        // Text to speak in English language
+		nil,               // voice to use, nil == DefaultVoice (en-us male)
+		"audios/test.wav", // if "" or "play", it plays to default audio out
+		params,            // Parameters for voice modulation, nil == DefaultParameters
+	)
+	fmt.Printf("Bhojpur Speech bytes written to audios/test.wav:\t%d\n", written)
+
+	// get a random Spanish voice
+	v, _ := espeak.VoiceFromSpec(&espeak.Voice{Languages: "es"})
+	written, _ = espeak.TextToSpeech(os.Args[1], v, "audios/test_es.wav", params)
+	fmt.Printf("Bhojpur Speech bytes written to audios/test_es.wav:\t%d\n", written)
 }

@@ -32,6 +32,10 @@ import (
 )
 
 func main() {
+	log.Println("Bhojpur Speech transcribe utility")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	var filename string
 	flag.StringVar(&filename, "f", "", "file to transcribe")
 	flag.Parse()

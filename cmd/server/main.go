@@ -35,23 +35,28 @@ import (
 )
 
 func main() {
+	log.Println("Bhojpur Speech streaming server (MP3)")
+	log.Println("Copyright (c) 2018 by Bhojpur Consulting Private Limited, India.")
+	log.Printf("All rights reserved.\n")
+
 	wd, _ := os.Getwd()
 	certFile := filepath.Join(wd, "ssl", "cert.pem")
 	keyFile := filepath.Join(wd, "ssl", "private.key")
 	creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
 
 	serverAddr := fmt.Sprintf(
-		":%s",
+		"%s:%s",
+		utils.GetenvDefault("HOST", "localhost"),
 		utils.GetenvDefault("PORT", strconv.Itoa(pb.PORT)),
 	)
 	listen, err := net.Listen("tcp", serverAddr)
 	if err != nil {
-		log.Fatalf("Bhojpur Speech: Failed to listen: %v", err)
+		log.Fatalf("server engine failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer(grpc.Creds(creds))
 	pb.RegisterStreamerServer(grpcServer, pb.NewServer())
 
-	fmt.Printf("Bhojpur Speech: server engine listening on gRPC port%s\n", serverAddr)
+	log.Printf("server engine listening on gRPC %s\n", serverAddr)
 	grpcServer.Serve(listen)
 }
