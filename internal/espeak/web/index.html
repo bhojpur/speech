@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A simple demonstration of the Text-to-Speech framework usage online">
+  <title>Bhojpur Speech - Online Text-to-Speech</title>
+  <link rel="icon" href="https://static.bhojpur.net/favicon.ico" type="image/x-icon" />
+  <link rel="stylesheet" type="text/css" href="/static/css/base.css" >
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto:wght@500&family=Source+Sans+Pro&display=swap" rel="stylesheet"> 
+</head>
+<body>
+  <h1>Bhojpur Speech - Text-to-Speech</h1>
+  <hr size="1px">
+  <p>It a web-based demonstration of <a rel="noopener noreferrer" target="_blank" href="https://github.com/bhojpur/speech"><code>Bhojpur Speech</code></a>'s usage.</p>
+  <form id="wav-form" method="POST" action="/">
+    <select name="voice">
+      <optgroup label="Default voices">
+        <option value="en-us-male" {{if eq .VoiceName "en-us-male"}}selected{{end}}>US English Male</option>
+        <option value="es-es-male" {{if eq .VoiceName "es-es-male"}}selected{{end}}>Spain Spanish Male</option>
+        <option value="es-lat-male" {{if eq .VoiceName "es-lat-male"}}selected{{end}}>Latin Spanish Male</option>
+        <option value="fr-fr-male" {{if eq .VoiceName "fr-fr-male"}}selected{{end}}>France French Male</option>
+      </optgroup>
+    </select>
+    <label for="say">Say:
+      <input type="text" name="say" placeholder="Write something to say!" {{if ne .Say ""}}value="{{.Say}}"{{end}}/>
+    </label>
+    <div class="flex flex-right">
+      <button type="submit">Submit</button>
+      <button type="button" onclick="downloadWav()">Download</button>
+    </div>
+
+    <h4>Options</h4>
+    <button type="button" onclick="setDefaults()">Defaults</button>
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <label for="rate">Rate</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext">Rate speaking speed in word per minute. Values 80 to 450. Default 175.</span>
+            </div>
+          </td>
+          <td><input onchange="update('rate-value', this.value)" type="range"  id="rate" name="rate" min="80" max="450" value="{{if ne .Rate 175}}{{.Rate}}{{else}}175{{end}}"/></td>
+          <td><span id="rate-value">{{if ne .Rate 175}}{{.Rate}}{{else}}175{{end}}</span></td>
+        </tr>
+        <tr>
+          <td>
+            <label for="volume">Volume</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext">Volume in range 0-200. Default 100.</span>
+            </div>
+          </td>
+          <td><input onchange="update('volume-value', this.value)" type="range"  id="volume" name="volume" min="0" max="200" value="{{if ne .Volume 100}}{{.Volume}}{{else}}100{{end}}"/></td>
+          <td><span id="volume-value">{{if ne .Volume 100}}{{.Volume}}{{else}}100{{end}}</span></td>
+        </tr>
+        <tr>
+          <td>
+            <label for="pitch">Pitch</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext">Base pitch. Range 0-100. Default 50.</span>
+            </div>
+          </td>
+          <td><input onchange="update('pitch-value', this.value)" type="range"  id="pitch" name="pitch" min="0" max="100" value="{{if ne .Pitch 50}}{{.Pitch}}{{else}}50{{end}}"/></td>
+          <td><span id="pitch-value">{{if ne .Pitch 50}}{{.Pitch}}{{else}}50{{end}}</span></td>
+        </tr>
+        <tr>
+          <td>
+            <label for="range">Range</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext">Pitch range. Range 0-100. 0=monotone, 50=normal.</span>
+            </div>
+          </td>
+          <td><input onchange="update('range-value', this.value)" type="range"  id="range" name="range" min="0" max="100" value="{{if ne .Range 50}}{{.Range}}{{else}}50{{end}}"/></td>
+          <td><span id="range-value">{{if ne .Range 50}}{{.Range}}{{else}}50{{end}}</span></td>
+        </tr>
+        <tr>
+          <td>
+            <label for="word-gap">Word gap</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext">Pause between words, units of 10mS (at the default rate of 175 WPM).</span>
+            </div>
+          </td>
+          <td><input onchange="update('word-gap-value', this.value)" type="range" min="0" max="50" id="word-gap" name="word-gap" min="0" max="100" value="{{if ne .WordGap 10}}{{.WordGap}}{{else}}10{{end}}"/></td>
+          <td><span id="word-gap-value">{{if ne .WordGap 10}}{{.WordGap}}{{else}}10{{end}}</span></td>
+        </tr>
+        <tr>
+          <td>
+            <label>Punctuation</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext text-left">
+                <p>
+                  Punctuation characters to announce.
+                </p>
+                <ul>
+                  <li>None: do not announce punctuation signs.</li>
+                  <li>Some: only announce the signs as defined in the punctuation list.</li>
+                  <li>All: announce all punctuation signs by their name.</li>
+                </ul>
+              </span>
+            </div>
+          </td>
+          <td colspan="2">
+            <div>
+              <input onchange="togglePunctList()" type="radio" id="punctuation-none" name="punctuation" value="none" {{if eq .AnnouncePunctuation "none"}}checked{{end}}>
+              <label for="punctuation-none">None</label>
+            </div>
+            <div>
+              <input onchange="togglePunctList()" type="radio" id="punctuation-some" name="punctuation" value="some" {{if eq .AnnouncePunctuation "some"}}checked{{end}}>
+              <label for="punctuation-some">Some</label>
+              <input
+                type="text"
+                id="punctuation-list"
+                name="punctuation-list"
+                placeholder="Punctuation list (.,!)"
+                title='If punctuation == "some", provide a punctuation list to use.'
+                value='{{if ne .PunctList ""}}{{.PunctList}}{{end}}'
+                style="visibility: hidden; display: none;">
+            </div>
+            <div>
+              <input onchange="togglePunctList()" type="radio" id="punctuation-all" name="punctuation" value="all" {{if eq .AnnouncePunctuation "all"}}checked{{end}}>
+              <label for="punctuation-all">All</label>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label>Capital ennunciation</label>
+            <div class="tooltip">
+              <img class="question-circle" src="/static/img/827.svg" >
+              <span class="tooltiptext text-left">
+                <p>
+                  Setting to denote capital characters by.
+                </p>
+                <ul>
+                  <li>None: no difference from lowercase characters.</li>
+                  <li>Sound icon: plays a chime-like sound at the time the letter is pronounced.</li>
+                  <li>Spelling: announce capital letters by saying "Capital" then letter. Varies by language (e.g. french is "mayuscule").</li>
+                  <li>Pitch raise: capital letters and words with them have a raised pitch.</li>
+                </ul>
+              </span>
+            </div>
+          </td>
+          <td colspan="2">
+            <div>
+              <input type="radio" id="capitals-none" name="capitals" value="none" {{if eq .AnnounceCapitals "none"}}checked{{end}}>
+              <label for="capitals-none">None</label>
+            </div>
+            <div>
+              <input type="radio" id="capitals-sound-icon" name="capitals" value="sound-icon" {{if eq .AnnounceCapitals "sound-icon"}}checked{{end}}>
+              <label for="capitals-sound-icon">Sound icon</label>
+            </div>
+            <div>
+              <input type="radio" id="capitals-spelling" name="capitals" value="spelling" {{if eq .AnnounceCapitals "spelling"}}checked{{end}}>
+              <label for="capitals-spelling">Spelling</label>
+            </div>
+            <div>
+              <input type="radio" id="capitals-pitch-raise" name="capitals" value="pitch-raise" {{if eq .AnnounceCapitals "pitch-raise"}}checked{{end}}>
+              <label for="capitals-pitch-raise">Pitch raise</label>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+  <audio id="demo" src="{{.FileSource}}" type="audio/wav" autoplay>
+      Your browser does not support the <code>audio</code> element.
+  </audio>
+
+  <hr size="1px">
+  <footer class="footer">
+    Copyright &copy; 2018 by <a href="https://www.bhojpur-consulting.com">Bhojpur Consulting Private Limited</a>, India.
+  </footer>
+  
+</body>
+<script type="text/javascript" src="/static/js/base.js"></script>
+<script type="text/javascript" src="/static/js/download.js"></script>
+<script type="text/javascript">
+  togglePunctList();
+</script>
+</html>

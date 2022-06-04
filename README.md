@@ -151,6 +151,23 @@ brew install espeak
 
 ### Client-side Speech Synthesis
 
+You can try our a *web-based* user interface of remote speaker `Go` application built using
+[eSpeak](http://espeak.sourceforge.net/) framework.
+
+```bash
+go run ./internal/espeak/web/main.go
+```
+
+#### Go-based Speech Synthesis
+
+It is performed in *offline* mode using [eSpeak](http://espeak.sourceforge.net/) framework
+and our `Go` language bindings.
+
+```bash
+speechtext "मेरा नाम भोजपुर कंसल्टिंग है"
+speechplay audios/test_hi.wav
+```
+
 #### Python-based Speech Synthesis
 
 A sample `Python` program (i.e. [speaker](internal/speaker/main.py)) is included in this

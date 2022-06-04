@@ -49,8 +49,8 @@ func main() {
 	)
 	fmt.Printf("Bhojpur Speech bytes written to audios/test.wav:\t%d\n", written)
 
-	// get a random Spanish voice
-	v, _ := espeak.VoiceFromSpec(&espeak.Voice{Languages: "es"})
-	written, _ = espeak.TextToSpeech(os.Args[1], v, "audios/test_es.wav", params)
-	fmt.Printf("Bhojpur Speech bytes written to audios/test_es.wav:\t%d\n", written)
+	// get a random Hindi voice
+	v, _ := espeak.VoiceFromSpec(&espeak.Voice{Languages: "hi"})
+	written, _ = espeak.TextToSpeech(os.Args[1], v, "audios/test_hi.wav", params)
+	fmt.Printf("Bhojpur Speech bytes written to audios/test_hi.wav:\t%d\n", written)
 }
